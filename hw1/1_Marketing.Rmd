@@ -12,14 +12,18 @@ library(ggplot2)
 library(dplyr)
 library(readr)
 library(rpart)
+library(rpart.plot)
 ```
 
 ## File Parameters
 
 ```{r}
-path <- "stats315b/hw1/data/"
+# Session -> set working directory -> Source file location
+
+# Path for data
+data_path <- "data/"
 file <- "Income_Data.txt"
-ext <- paste(path, file, sep = "")
+ext <- paste(data_path, file, sep = "")
 ```
 
 ## Read in Data
@@ -57,9 +61,66 @@ var_type <- cols(col_factor(sprintf("%i", 1:9), ordered =  TRUE), # income
                  col_factor(sprintf("%i", 1:8), ordered = FALSE), # ethnicity
                  col_factor(sprintf("%i", 1:3), ordered = FALSE)) # language
 
+var_type <- cols(col_factor(sprintf("%i", 1:9), ordered = FALSE), # income
+                 col_factor(sprintf("%i", 1:2), ordered = FALSE), # sex
+                 col_factor(sprintf("%i", 1:5), ordered = FALSE), # marital stat
+                 col_factor(sprintf("%i", 1:7), ordered = FALSE), # age
+                 col_factor(sprintf("%i", 1:6), ordered = FALSE), # education
+                 col_factor(sprintf("%i", 1:9), ordered = FALSE), # occupation
+                 col_factor(sprintf("%i", 1:5), ordered = FALSE), # bay duration
+                 col_factor(sprintf("%i", 1:3), ordered = FALSE), # dual income
+                 col_factor(sprintf("%i", 1:9), ordered = FALSE), # house count
+                 col_factor(sprintf("%i", 0:9), ordered = FALSE), # minor count
+                 col_factor(sprintf("%i", 1:3), ordered = FALSE), # rent/own
+                 col_factor(sprintf("%i", 1:5), ordered = FALSE), # house type
+                 col_factor(sprintf("%i", 1:8), ordered = FALSE), # ethnicity
+                 col_factor(sprintf("%i", 1:3), ordered = FALSE)) # language
+
 df <- read_csv(file = ext, 
                col_names = var_names, 
                col_types = var_type)
+```
+
+The data does not have any column headers, so we have to manually assign the 
+column names. Our variables are also all categorical variables, some with an 
+order relationship and some with out. We also have to import these values as 
+factors, specifiying if they have an order relationship or not. The following 
+variables have an order relationship:
+
+* Income
+* Age
+* Education
+* Amount of time living in the bay area
+* Household count
+* Minors in household count
+
+The remaining variables do not have an order relationship:
+
+* Sex
+* Marital status
+* Occupation
+* Dual income status
+* Whether you rent or own a house
+* Type of house you live in
+* Ethnicity
+* Languages
+
+## Fit a Tree Model
+
+```{r}
+# Modify tree control parameters. Specify 10-fold cross validation
+rpart.control(xval = 10L)
+
+# Make a fit, specify classification model
+fit <- rpart(formula = income ~ ., 
+             data = df, 
+             method = "class")
+
+# Save file of tree image
+post(tree = fit, filename = "Income.ps")
+
+# Alternate tree image
+prp(x = fit)
 ```
 
 
