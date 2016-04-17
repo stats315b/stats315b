@@ -36,9 +36,14 @@
 %---------------------------------Answer------------------------------------------------
 %---------------------------------------------------------------------------------------
 
-\vspace{5 mm}
-\noindent
-First, you cannot determine your prediction function over the class of all functions because it is computationally infeasible. You will have an infinite set of functions to search over, which will require an infinite number of computers to complete a search. However, even if you could search over the entire function space for your target function, the result would most likely be suboptimal.
+\vspace{5 mm} 
+\noindent 
+First, you cannot determine your prediction function over the class of all
+functions because it is computationally infeasible. You will have an infinite
+set of functions to search over, which will require an infinite number of
+computers to complete a search. However, even if you could search over the
+entire function space for your target function, the result would most likely be
+suboptimal.
 
 \vspace{5 mm}
 \noindent
@@ -50,7 +55,9 @@ F^{*} = \argminl_{F} R(F) = \argminl_{F} E_{XY}[L(y, F(x))]
 
 \vspace{5 mm}
 \noindent
-Our target function minimizes the prediction risk, which is the expected loss over the joint distribution of $X$ and $Y$ if we predict $F(x)$ when the actual response is $y$. By convention, our loss function is such that:
+Our target function minimizes the prediction risk, which is the expected loss
+over the joint distribution of $X$ and $Y$ if we predict $F(x)$ when the actual
+response is $y$. By convention, our loss function is such that:
 
 \begin{itemize}
 \item $L(y, F(x)) \ge 0$
@@ -58,9 +65,31 @@ Our target function minimizes the prediction risk, which is the expected loss ov
 \end{itemize}
 
 \noindent
-In practice, we typically estimate the target function by minimizing the empirical risk over the training data as a surrogate to minimizing the prediction risk. So if we develop our model such that $F(x) = y$ for our training data, we will have found a model such that its total training loss is $0$ and our empirical risk on the training data is absolutely minimized (that is, no other function could possibly achieve a smaller empirical risk). There is not only just one such model that will fit your training data exactly, but infinitely many models. Your search for the function that minimizes empirical risk will then conclude with a set of infinitely many functions to choose from as your best approximation for the target function. 
+In practice, we typically estimate the target function by minimizing the
+empirical risk over the training data as a surrogate to minimizing the
+prediction risk. So if we develop our model such that $F(x) = y$ for our
+training data, we will have found a model such that its total training loss is
+$0$ and our empirical risk on the training data is absolutely minimized (that
+is, no other function could possibly achieve a smaller empirical risk). There is
+not only just one such model that will fit your training data exactly, but
+infinitely many models. Your search for the function that minimizes empirical
+risk will then conclude with a set of infinitely many functions to choose from
+as your best approximation for the target function.
 
 \vspace{5 mm}
 \noindent
-Not only will it be infeasible to distinguish between these infinitely many functions, but all of the functions returned will most likely be nowhere near a good approximation to the target function. This is due to the fact your training data is random itself and has noise. When you fit the training data exactly, you are almost guaranteed to be over-fitting since you will be modeling the noise exhibited in your particular training data. When you start fitting the noise, your function loses its ability to predict on new data because that new data may have the same signal as the old data, but it has different noise. You have increased your model's variance and diminished its ability to predict on new data, thus increasing its prediction risk. Your strategy of searching over all possible target functions will yield functions with poorer prediction risk when compared to methods that restrict its search of the target function. As such, the method of restricting your search will yield a better estimate of your target function.
+Not only will it be infeasible to distinguish between these infinitely many
+functions, but all of the functions returned will most likely be nowhere near a
+good approximation to the target function. This is due to the fact your training
+data is random itself and has noise. When you fit the training data exactly, you
+are almost guaranteed to be over-fitting since you will be modeling the noise
+exhibited in your particular training data. When you start fitting the noise,
+your function loses its ability to predict on new data because that new data may
+have the same signal as the old data, but it has different noise. You have
+increased your model's variance and diminished its ability to predict on new
+data, thus increasing its prediction risk. Your strategy of searching over all
+possible target functions will yield functions with poorer prediction risk when
+compared to methods that restrict its search of the target function. As such,
+the method of restricting your search will yield a better estimate of your
+target function.
 \end{document}
