@@ -1,0 +1,45 @@
+---
+title: "Probelem 1 - Data Mining Marketing"
+author: "Henry Neeb, Christopher Kurrus, Tyler Chase"
+date: "April 16, 2016"
+output: pdf_document
+---
+
+## Libraries
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(rpart)
+library(rpart.plot)
+```
+
+## File Parameters
+
+```{r}
+# Session -> set working directory -> Source file location
+
+# Path for data
+data_path <- "data/"
+file <- "Income_Data.txt"
+ext <- paste(data_path, file, sep = "")
+```
+
+## Read in Data
+
+```{r}
+df <- read_csv(file = ext)
+```
+
+Notes on reading in the data
+
+## Analysis Part 1
+
+Explanation of what you're going to do.
+
+```{r}
+# Code
+```
+
+Notes on what you found
