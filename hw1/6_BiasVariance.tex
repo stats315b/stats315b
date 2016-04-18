@@ -36,5 +36,45 @@
 %---------------------------------Answer------------------------------------------------
 %---------------------------------------------------------------------------------------
 
+\vspace{5 mm}
+\noindent
+Bias and variance are two sources of error that occur when predicting on new
+data. {\bf Bias} is the error associated with not correctly targeting the true
+value of the response on an expected basis. It is formally defined as $Bias(F) =
+E[F(x)] - F^{*}(x)$, where $F^{*}(x)$ is the true functional relationship
+between your features and your response. So bias occurs when the expected value
+of your model is not equal the true functional relationship between your
+features and your response. Generally speaking, bias is the attribute of
+underfitting your data (i.e. not accurately modeling the signal well enough).
+When we underfit, our prediction error is increased because we haven't modeled
+the signal well enough, so we consistently predict far from the true functional
+relationship between our features and the response - this error is bias.
 
+\vspace{5 mm}
+\noindent
+{\bf Variance} is the error associated with fitting your model to model behavior
+exhibited in the noise of your training data. That is, it is the error
+associated with overfitting. When we overfit, our prediction error is
+increased because we have modeled the noise that is particular to our training
+data and is not exhibited in our new data set - this error is variance.
+
+\vspace{5 mm}
+\noindent
+Typically, there is an inverse relationship between bias and variance in the
+context of minimizing error. That is, when you decrease variance, you tend to do
+so at the expense of bias and vice versa. This relationship can be seen with the
+above explanation. Minimizing bias with no regard to variance means fitting the
+most complicated model possible to explain as much of the signal (and as a
+result, the noise) as possible. However, we then tend to overfit, causing high
+variance in our prediction error. The converse is true when we try to minimze
+bias.
+
+\vspace{5 mm}
+\noindent
+The {\bf bias-variance tradeoff} is the notion that tweaking your model with
+consideration to bias will have an opposite affect to the variance of your
+model. There is a cost associated with lowering your model's prediction
+variance, and it is typically paid with increased bias. When considering how to
+lower your model's overall predication error, you need to strike a balance
+between minimizing bias and minimizing variance.
 \end{document}
