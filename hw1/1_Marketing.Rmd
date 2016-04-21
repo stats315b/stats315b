@@ -13,6 +13,8 @@ library(dplyr)
 library(readr)
 library(rpart)
 library(rpart.plot)
+library(RColorBrewer)
+library(rattle)
 ```
 
 ## File Parameters
@@ -105,19 +107,97 @@ The remaining variables do not have an order relationship:
 * Ethnicity
 * Languages
 
-## Fit a Tree Model
+## Fit a Maximal Tree Model for Pruning
+
+We will first fit a tree with a low complexity paramter so that we can observe 
+it's behavior and decide on an optimal parameter based on cross validation 
+error. We will use the following control parameters:
+
+* 10-fold cross validation
+* 100 minsplit
+* Use default surrogate parameters, except split by majority if split data and 
+all surrogate information is missing.
+* Use a low complexity parameter of 0.00001
 
 ```{r}
-# Modify tree control parameters. Specify 10-fold cross validation
-rpart.control(xval = 10L)
+# Modify tree control parameters. Specify 10-fold cross validation, low cost, 
+# minimum split needs at least 100 observations, and specify use correlation 
+# surrogate if possible, else use majority
+control_parms <- rpart.control(xval = 10L, 
+                               minsplit = 100, 
+                               usesurrogate = 2,
+                               cp = .00001)
 
 # Make a fit, specify classification model
 fit <- rpart(formula = income ~ ., 
              data = df, 
-             method = "class")
+             method = "class",
+             control = control_parms)
+```
+
+Let us now look at cross-validation error versus our complexity parameter, as 
+well as a summary of our model and cross-validation error.
+
+```{r}
+printcp(fit)
+plotcp(fit)
+```
+
+The dashed line on plotcp marks the minimum cross validation error plus one 
+standard error. We will use this rule for selecting a model - the model with 
+the largest complexity parameter that produces a cross-validation error just 
+below the sum of the two aforementioned values.
+
+```{r}
+# Find the index where cross validation is minimized to implement 1-SE rule
+xerror_list <- fit$cptable[,"xerror"]
+min_idx <- as.integer(which.min(xerror_list))
+se_cutoff <- as.numeric(fit$cptable[,"xstd"][min_idx]) +
+             as.numeric(xerror_list[min_idx])
+
+# Find CP where cross-val error just dips below SE + min cross-val cutoff
+opt_cp <- 1.0
+for (i in seq_len(length(xerror_list))){
+  if (xerror_list[i] < se_cutoff){
+    opt_cp <- as.numeric(fit$cptable[,"CP"][i])
+    break
+  }
+}
+```
+
+We will now prune the true according to this 1-Standard Error Rule complexity 
+parameter and replot and print the complexity parameter.
+
+```{r}
+pruned_fit <- prune(tree = fit, cp = opt_cp)
+
+plotcp(pruned_fit)
+printcp(pruned_fit)
+```
+
+This will be our optimal tree. Lets look at a nice plot.
+
+```{r}
+fancyRpartPlot(model = pruned_fit, 
+               main = "Pruned Decision Tree", 
+               sub = "")
+```
+
+
+
+
+prune_fit <- prune(tree = fit, cp = 0.004)
+
+print(prune_fit)
+
+plotcp(fit)
+print(fit)
+
+plot(prune_fit, uniform = TRUE)
+text(prune_fit, use.n = TRUE)
 
 # Save file of tree image
-post(tree = fit, filename = "Income.ps")
+post(tree = prune_fit, filename = "Income.ps", horizontal = FALSE)
 
 # Alternate tree image
 prp(x = fit)
