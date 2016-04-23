@@ -1,0 +1,71 @@
+\documentclass[11pt]{article}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{enumerate}
+\usepackage{mdframed}
+
+\DeclareMathOperator*{\argmin}{argmin}
+\newcommand*{\argminl}{\argmin\limits}
+
+
+\begin{document}
+\begin{center}
+%---------------------------------------------------------------------------------------
+%---------------------------------Header------------------------------------------------
+%---------------------------------------------------------------------------------------
+
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, and Tyler Chase}
+}}
+\ \\
+\end{center}
+
+%---------------------------------------------------------------------------------------
+%---------------------------------Answer------------------------------------------------
+%---------------------------------------------------------------------------------------
+
+\vspace{5 mm}
+\noindent
+To show that the minimizing values of $\hat{c}_{m}$ are given by $\sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{m})) / \sum\limits_{i=0}^N (I(x_{i} \in R_{m}))$ we will expand upon our given functions.
+
+\vspace{3 mm}
+\noindent
+We know our criterion is $\sum\limits_{i=1}^N (y_{i} - F(x_{i}))^2$ and we have $F(x) = \sum\limits_{m=1}^M (c_{m}I(x \in R_{m}))$
+
+\vspace{3 mm}
+\noindent
+Proceeding, we can expand our criterion into $\sum\limits_{i=1}^N (y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))^2$
+
+\vspace{3 mm}
+\noindent
+Now our goal is to find the minimizing value $min_{c_{m}}[\sum\limits_{i=1}^N (y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))^2]$ 
+
+\vspace{3 mm}
+\noindent
+Considering that $I(x_{i} \in R_{m})$ will return 1 when $x_{i} \in R_{m}$ and 0 otherwise, we can represent this criterion more clearly by using careful summation notation and eliminating our $I()$ term.
+
+\vspace{3 mm}
+\noindent
+We can restate as $min_{c_{m}}[\sum\limits_{m=1}^M \sum\limits_{(x_{i},y_{i})|x_{i} \in R_{m}} (y_{i} - c_{m})^2]$
+
+\vspace{3 mm}
+\noindent
+This representation allows us to see what is happening much more clearly, for each $m$ we sum $ (y_{i} - c_{m})^2 $ for each $x_{i} \in R_{m}$
+
+\vspace{3 mm}
+\noindent
+Now that we have the proper representation, it is obvious to see that our solution must be the mean on the training data outcome values for the observations within each region, \newline i.e. $ \hat{c}_{m} = \sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{m})) / \sum\limits_{i=0}^N (I(x_{i} \in R_{m}))$
+
+\end{document}
