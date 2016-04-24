@@ -1,0 +1,82 @@
+\documentclass[11pt]{article}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{enumerate}
+\usepackage{mdframed}
+
+\DeclareMathOperator*{\argmin}{argmin}
+\newcommand*{\argminl}{\argmin\limits}
+
+
+\begin{document}
+\begin{center}
+%-------------------------------------------------------------------------------
+%---------------------------------Header----------------------------------------
+%--------------------------------------------------------------------------------
+
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, and Tyler Chase}
+}}
+\ \\
+\end{center}
+
+%-------------------------------------------------------------------------------
+%---------------------------------Answer----------------------------------------
+%-------------------------------------------------------------------------------
+
+\vspace{5 mm}
+\noindent
+{\bf Treat Node as Terminal:} Treating the node as terminal means we predict on 
+the majority at the node with the missing value. Why this is ok:
+
+\begin{itemize}
+\item Surrogate might be a bad predictor. Weak correlation might split 
+erroneously, and we have very little control over that.
+\item With homogeneous data (i.e. you have roughly the same amount of different 
+types of responses) it might be ok, because as you pull out other types of 
+responses and you're left with a dominating set of one response, it is at this 
+point very likely that you will predict the majority anyway.
+\end{itemize}
+
+Why it might be bad:
+
+\begin{itemize}
+\item Shear majority rules without going through all the splits might be 
+problematic depending on the data you have collected. For example, let's say 
+you were building a decision tree that predicts a rare disease. Your tree will 
+be susceptible to always deciding on a patient not having the disease when 
+there is missing data because most likely your training data will have mostly 
+those without the disease.
+\item We know from tree construction, the previous split you have taken may not 
+be useful by itself. Predicting at the terminal node does not allow other 
+features from the data to help with prediction.
+\item Majority rules at the node where there are roughly equal amounts of the 
+same responses is not a compelling prediction.
+\end{itemize}
+
+{\bf Split by Majority:} Why this is ok:
+
+\begin{itemize}
+\item 
+\end{itemize}
+
+Why it might be bad:
+
+\begin{itemize}
+\item 
+\end{itemize}
+
+
+\end{document}
