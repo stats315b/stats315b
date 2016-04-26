@@ -27,7 +27,7 @@
 \framebox{\parbox{6.5in}{
 {\bf{STATS 315B: Data Mining, Spring 2016}}\\
 {\bf Homework 1, Due 4/28/2016}\\
-{\bf Completed by: Henry Neeb, Christopher Kurrus, and Tyler Chase}
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
 }}
 \ \\
 \end{center}
@@ -39,44 +39,64 @@
 \vspace{5 mm}
 \noindent
 {\bf Treat Node as Terminal:} Treating the node as terminal means we predict on 
-the majority at the node with the missing value. Why this is ok:
+the majority at the node with the missing value. The following are reasons and 
+situations when this strategy is ok:
 
 \begin{itemize}
 \item Surrogate might be a bad predictor. Weak correlation might split 
-erroneously, and we have very little control over that.
-\item With homogeneous data (i.e. you have roughly the same amount of different 
-types of responses) it might be ok, because as you pull out other types of 
-responses and you're left with a dominating set of one response, it is at this 
-point very likely that you will predict the majority anyway.
+erroneously.
+\item If you start with homogenous data (i.e. you have roughly the same amount 
+of different types of responses) and you are far enough down the tree to have a 
+fairly pure node, it might be better to just predict at the node rather than 
+guessing. Guessing at the node will reduce the compounded variance of 
+prediction observed by sending your observation further down the tree.
 \end{itemize}
 
-Why it might be bad:
+\vspace{2 mm}
+\noindent
+The following are reasons and situations where this might be bad
 
 \begin{itemize}
-\item Shear majority rules without going through all the splits might be 
-problematic depending on the data you have collected. For example, let's say 
-you were building a decision tree that predicts a rare disease. Your tree will 
-be susceptible to always deciding on a patient not having the disease when 
-there is missing data because most likely your training data will have mostly 
-those without the disease.
-\item We know from tree construction, the previous split you have taken may not 
-be useful by itself. Predicting at the terminal node does not allow other 
-features from the data to help with prediction.
-\item Majority rules at the node where there are roughly equal amounts of the 
-same responses is not a compelling prediction.
+\item If you have lop-sided training data (that is you have far more 
+observations of one type of response) you run the risk of just always 
+predicting for the response that has the most data, even when you are further 
+down the tree near the terminal nodes.
+\item It may perform poorly if you need to predict near the root of the tree. 
+If we haven't sufficiently parsed out the data in to relatively pure nodes, 
+such as near the root, we will predict essentially on what training data we 
+have the most of. For example, if you could imagine having to predict on the, 
+root we would essentially predict which response we collected the most of.
+\item If we actually have a highly correlated surrogate, then we miss out on 
+possible future benefits of future splitting.
 \end{itemize}
 
-{\bf Split by Majority:} Why this is ok:
+\vspace{2 mm}
+\noindent
+{\bf Split by Majority:} This approach assumes that an observation is most 
+likely to go the direction where most of the training data goes. This method 
+performs well when:
 
 \begin{itemize}
-\item 
+\item Surrogate might be a bad predictor. Weak correlation might split 
+erroneously.
+\item If you have homogenous data and splits are lop-sided (that is, the 
+majority of one type of data is going one way by a wide margin), then it is 
+somewhat reasonable to assume that you would observe that oberservation to also 
+go in that direction.
 \end{itemize}
 
-Why it might be bad:
+\vspace{2 mm}
+\noindent
+This method performs poorly when
 
 \begin{itemize}
-\item 
+\item Splits between two child nodes contain nearly half of the data from the 
+parent. This would make for an unstable model, because assuming you would 
+sample the same in another experiment, you could realize a different majority, 
+thus sending your observation down the other side.
+\item Again, if you have lop-sided training data, you may expect that the 
+majority of the training data will always flow in favor of the response that 
+makes up the majority of your training data.
 \end{itemize}
-
 
 \end{document}
