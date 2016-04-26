@@ -1,6 +1,6 @@
 ---
 title: "Probelem 1 - Data Mining Marketing"
-author: "Henry Neeb, Christopher Kurrus, Tyler Chase"
+author: "Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas"
 date: "April 16, 2016"
 output: pdf_document
 ---
