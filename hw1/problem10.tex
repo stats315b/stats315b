@@ -1,0 +1,101 @@
+\documentclass[11pt]{article}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{enumerate}
+\usepackage{mdframed}
+\usepackage{mathrsfs}
+
+
+
+\begin{document}
+\begin{center}
+%---------------------------------------------------------------------------------------
+%---------------------------------Header------------------------------------------------
+%---------------------------------------------------------------------------------------
+
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, and Tyler Chase}
+}}
+\ \\
+\end{center}
+\section*{Problem 10}
+\setlength{\parindent}{0pt}
+
+From the lecture notes the improvement in square error risk when one of the regions $R_m$ is split into daughter regions $R_m \to R_l \cup R_r$
+
+$\underset{x}{\operatorname{argmax}}$
+
+\begin{equation}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \sum_{\underline{X}_i \in R_m} \{[y_i-\bar{y}_m]^2-[y_i - \bar{y}_m^{(l)}I(\underline{X}_i \in R_m^{(l)})-\bar{y}_m^{(r)}I(\underline{X}_i \in R_m^{(r)})]^2\}
+\end{equation}
+
+We now expand the squared terms. 
+
+\begin{equation}
+\begin{split}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \sum_{\underline{X}_i \in R_m} \{(y_i^2-y_i^2) -2y_i\bar{y}_m + \bar{y}_m^2 +2y_i\bar{y}_m^{(l)}I(X_i \in R_m^{(l)}) +2y_i\bar{y}_m^{(r)}I(\underline{X}_i \in R_m^{(r)}) \\- 2y_m^{(l)}I(\underline{X}_i \in R_m^{(l)})\bar{y}_m^{(r)}I(\underline{X}_i \in R_m^{(r)})-[\bar{y}_m^{(l)}I(\underline{X}_i \in R_m^{(l)})]^2-[\bar{y}_m^{(r)}I(\underline{X}_i \in R_m^{(r)})]^2\}
+\end{split}
+\end{equation}
+
+Cancel the two $y_i^2$ terms. Since $R_m^{(l)} \cap R_m^{(r)} = 0$ the term  $2y_m^{(l)}I(\underline{X}_i \in R_m^{(l)})\bar{y}_m^{(r)}I(\underline{X}_i \in R_m^{(r)})$ cancels. Also note that $I(\underline{X}_i \in R)^2 = I(\underline{X}_i \in R)$.
+
+\begin{equation}
+\begin{split}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \sum_{\underline{X}_i \in R_m} \{-2y_i\bar{y}_m + \bar{y}_m^2 + 2y_i\bar{y}_m^{(l)}I(\underline{X}_i \in R_m^{(l)}) + 2y_i\bar{y}_m^{(r)}I(\underline{X}_i \in R_m^{(r)})\\ - [\bar{y}_m^{(l)}]^2I(\underline{X}_i \in R_m^{(l)}) - [\bar{y}_m^{(r)}]^2I(\underline{X}_i \in R_m^{(r)})\}
+\end{split}
+\end{equation}
+
+Next we use the fact that $\sum_{\underline{X_i} \in R_m} y_i = N_m\frac{1}{N_m} \sum_{\underline{X}_i \in R_m}y_i = N_m \bar{y}_m$
+
+\begin{equation}
+\begin{split}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \{-2N_m\bar{y}_m^2 +N_m\bar{y}_m^2 + 2N_m^{(l)}[\bar{y}_m^{(l)}]^2 + 2N_m^{(r)}[\bar{y}_m^{(r)}]^2  -N_m^{(l)}[\bar{y}_m^{(l)}]^2 -N_m^{(r)}[\bar{y}_m^{(r)}]^2\}
+\end{split}
+\end{equation}
+
+Cancel the like terms. 
+
+\begin {equation}
+\begin{split}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \{-N_m[\bar{y}_m]^2 + N_m^{(l)}[\bar{y}_m^{(l)}]^2 +N_m^{(r)}[\bar{y}_m^{(r)}]^2\}
+\end{split}
+\end{equation}
+
+We next use the fact that $N_m\bar{y}_m = N_m^{(l)}\bar{y}_m^{(l)} + N_m^{(r)}\bar{y}_m^{(r)}$ proven below.
+
+$$ \sum_{\underline{X}_i \in R_m} y_i = \sum_{\underline{X}_i \in R_m^{(l)}}y_i + \sum_{\underline{X}_i \in R_m^{(r)}} y_i \Rightarrow N_m \frac{1}{N_m} \sum_{\underline{X}_i \in R_m}y_i = N_m^{(l)}\frac{1}{N_m^{(l)}} \sum_{\underline{X}_i \in R_m^{(l)}}y_i + N_m^{(r)}\frac{1}{N_m^{(r)}}\sum_{X_i \in R_m^{(r)}}y_i $$
+
+\begin {equation}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \{ -N_m ( \frac{N_m^{(l)}\bar{y}_m^{(l)} + N_m^{(r)}\bar{y}_m^{(r)}}{N_m})^2 + N_m^{(l)}[\bar{y}_m^{(l)}]^2 + N_m^{(r)}[\bar{y}_m^{(r)}]^2\}
+\end{equation}
+
+Make a common denominator and use $N_m = N_m^{(l)} + N_m^{(r)}$.
+
+\begin {equation}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \Bigg\{\frac{-[N_m^{(l)}\bar{y}_m^{(l)}]^2 - [N_m^{(r)}\bar{y}_m^{(r)}]^2-2N_m^{(l)}\bar{y}_m^{(l)}N_m^{(r)}\bar{y}_m^{(r)} + (N_m^{(l)}+ N_m^{(r)})N_m^{(l)}[\bar{y}_m^{(l)}]^2 + (N_m^{(l)}+N_m^{(r)})N_m^{(r)}[\bar{y}_m^{(r)}]^2}{N_m}\Bigg\}
+\end{equation}
+
+Cancel the like terms and pull out a common factor in all terms. 
+
+\begin{equation}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \Bigg\{\frac{N_m^{(l)}N_m^{(r)}}{N_m}\Big([\bar{y}_m^{(l)}]^2-2\bar{y}_m^{(l)}\bar{y}_m^{(r)} + [\bar{y}_m^{(r)}]^2\Big)\Bigg \}
+\end{equation}
+
+\begin{equation}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \Bigg\{\frac{N_m^{(l)}N_m^{(r)}}{N_m}\Big(\bar{y}_m^{(l)} - \bar{y}_m^{(r)}\Big)^2\Bigg \}
+\end{equation}
+
+
+\end{document}
