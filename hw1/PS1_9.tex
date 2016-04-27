@@ -27,7 +27,7 @@
 \framebox{\parbox{6.5in}{
 {\bf{STATS 315B: Data Mining, Spring 2016}}\\
 {\bf Homework 1, Due 4/28/2016}\\
-{\bf Completed by: Henry Neeb, Christopher Kurrus, and Tyler Chase}
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
 }}
 \ \\
 \end{center}
@@ -56,22 +56,26 @@ Now our goal is to find the minimizing value $min_{c_{m}}[\sum\limits_{i=1}^N (y
 
 \vspace{3 mm}
 \noindent
-We will do this using partial differentiation on the $c$ for which $x_{i} \in R_{k}$.  $\frac{d}{dc_{k}}[\sum\limits_{i=1}^N (y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))^2] = $
+partial derivative on cm for arbitrary region m
 
 \vspace{3 mm}
 \noindent
-$\sum\limits_{i=1}^N (2(y_{i} - c_{k})(-I(x_{i} \in R_{k})))$, as the resulting summations over $m$ will all go to zero for $m \neq k$.
+$\frac{d}{dc_{m}}[\sum\limits_{i=1}^N (y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))^2] = 2\sum\limits_{i=1}^N [(y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))(I(x_{i} \in R_{m}))]$ 
 
 \vspace{3 mm}
 \noindent
-Now we can set equal to zero and eliminate the constant 2, yielding $\sum\limits_{i=1}^N ((y_{i} - c_{k})(-I(x_{i} \in R_{k}))) = 0$
+distributing indicator term that has chosen m to non chosen m - for y stays - for cm because disjoint subset every cross term goes to zero - ind to the 2 is ind
 
 \vspace{3 mm}
 \noindent
-Distributing and splitting the summation we have $\sum\limits_{i=1}^N (c_{k}I(x_{i} \in R_{k}) - \sum\limits_{i=1}^N (y_{i}I(x_{i} \in R_{k}) = 0$
+$\sum\limits_{i=1}^N [y_{i}I(x_{i} \in R_{m}) - c_{m}I(x_{i} \in R_{m})] = 0$ 
 
 \vspace{3 mm}
 \noindent
-So simplifying, ${c}_{k} = \frac{\sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{k}))}{\sum\limits_{i=0}^N (I(x_{i} \in R_{k}))}$ as desired.
+Splitting the summation we have $\sum\limits_{i=1}^N (y_{i}I(x_{i} \in R_{m}) - c_{m}\sum\limits_{i=1}^N (I(x_{i} \in R_{m}) = 0$
+
+\vspace{3 mm}
+\noindent
+So simplifying, ${c}_{m} = \frac{\sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{m}))}{\sum\limits_{i=0}^N (I(x_{i} \in R_{m}))}$ as desired.
 
 \end{document}
