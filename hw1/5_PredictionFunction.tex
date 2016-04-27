@@ -36,10 +36,12 @@
 %---------------------------------Answer----------------------------------------
 %-------------------------------------------------------------------------------
 
+\section*{Problem 4}
+
 \vspace{5 mm} 
 \noindent 
 Searching over the entire space of function is both computationally infeasible 
-(you cannnot possibly hope to search over an infinite space) and it would most 
+(you cannot possibly hope to search over an infinite space) and it would most 
 likely yield suboptimal results. We define our target function as follows:
 
 \begin{gather*}
@@ -75,7 +77,7 @@ are almost guaranteed to be over-fitting since you will be modeling the noise
 exhibited in your particular training data. When you start fitting the noise,
 your function loses its ability to predict on new data because that new data may
 have the same signal as the old data, but it has different noise. As such, your 
-model will exhibit prediction error, and most likely will have more prediciton 
+model will exhibit prediction error, and most likely will have more prediction 
 error than if you chose a model by restriction the function class to search 
 over.
 \end{document}
