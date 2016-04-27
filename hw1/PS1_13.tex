@@ -36,6 +36,8 @@
 %---------------------------------Answer------------------------------------------------
 %---------------------------------------------------------------------------------------
 
+\section*{Problem 13}
+
 \vspace{5 mm}
 \noindent
 Due to its structure, this model has an advantage over surrogate splitting in cases where non-response carries some sort of information.  i.e. Q: What is your income? In this case respondents may be uncomfortable answering if they are shy, so a missing value could indicate shyness.  This is a very elementary example, but because the model accounts for missing values and treats them as a variable response, effects like these will be accounted for.  On the other hand, when the missing values are purely random, you will have additional non-optimal splits competing unnecessarily which will result in less data further down the tree.  This will result in watered down data which will run out more quickly, and is unnecessary when the additional splits are not improving the model prediction.  This strategy does allow for a surrogate effect, as if you are splitting on predictor $Y$ and predictor $Z$ is highly correlated to $Y$, then the data that had missing values for $Y$ will most likely be next split on $Z$.  This can be thought of as a surrogate effect.  This method cannot be used in cases where there is no missing data, as it will not create any missing value splits in the resulting model.  We can work around this by removing a certain percentage of the dataset at random, or bootstrapping our dataset and removing data from the bootstrapped points, including those in our original dataset.
