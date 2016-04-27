@@ -56,27 +56,22 @@ Now our goal is to find the minimizing value $min_{c_{m}}[\sum\limits_{i=1}^N (y
 
 \vspace{3 mm}
 \noindent
-We will do this using differentiation.  $\frac{d}{dc_{m}}[\sum\limits_{i=1}^N (y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))^2] = $
+We will do this using partial differentiation on the $c$ for which $x_{i} \in R_{k}$.  $\frac{d}{dc_{k}}[\sum\limits_{i=1}^N (y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))^2] = $
 
 \vspace{3 mm}
 \noindent
-$\sum\limits_{i=1}^N [2(y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))(-\sum\limits_{m=1}^M (I(x_{i} \in R_{m})))]$
+$\sum\limits_{i=1}^N (2(y_{i} - c_{k})(-I(x_{i} \in R_{k})))$, as the resulting summations over $m$ will all go to zero for $m \neq k$.
 
 \vspace{3 mm}
 \noindent
-And setting equal to 0 we have $\sum\limits_{i=1}^N [2(\sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})) - y_{i})]$ 
-
-
-
-
-
+Now we can set equal to zero and eliminate the constant 2, yielding $\sum\limits_{i=1}^N ((y_{i} - c_{k})(-I(x_{i} \in R_{k}))) = 0$
 
 \vspace{3 mm}
 \noindent
-$ \hat{c}_{m}\sum\limits_{i=0}^N (I(x_{i} \in R_{m})) - \sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{m})) = 0$
+Distributing and splitting the summation we have $\sum\limits_{i=1}^N (c_{k}I(x_{i} \in R_{k}) - \sum\limits_{i=1}^N (y_{i}I(x_{i} \in R_{k}) = 0$
 
 \vspace{3 mm}
 \noindent
-So simplifying $ \hat{c}_{m} = \sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{m})) / \sum\limits_{i=0}^N (I(x_{i} \in R_{m}))$
+So simplifying, ${c}_{k} = \frac{\sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{k}))}{\sum\limits_{i=0}^N (I(x_{i} \in R_{k}))}$ as desired.
 
 \end{document}
