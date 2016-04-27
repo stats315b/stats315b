@@ -20,9 +20,9 @@
 
 \begin{document}
 \begin{center}
-%---------------------------------------------------------------------------------------
-%---------------------------------Header------------------------------------------------
-%---------------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%---------------------------------Header----------------------------------------
+%-------------------------------------------------------------------------------
 
 \framebox{\parbox{6.5in}{
 {\bf{STATS 315B: Data Mining, Spring 2016}}\\
@@ -32,12 +32,20 @@
 \ \\
 \end{center}
 
-%---------------------------------------------------------------------------------------
-%---------------------------------Answer------------------------------------------------
-%---------------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%---------------------------------Answer----------------------------------------
+%-------------------------------------------------------------------------------
+\section*{Problem 8}
 
 \vspace{5 mm}
 \noindent
-It would be incorrect to use surrogate splits to predict the outcome variable, as opposed to using the primary split, because it will not result in an optimal (best) split.  We know that the surrogate split will not be optimal for the points where we have non-missing values, as otherwise it would be the primary split, and we can't apply the primary split to the missing values.  This means that our best split will be applying the primary split to the non-missing values and the surrogate split to the missing values. 
+It would be incorrect to use surrogate splits to predict the outcome variable, 
+as opposed to using the primary split, because it will not result in an optimal 
+(best) split.  We know that the surrogate split will not be optimal for the 
+points where we have non-missing values, as otherwise it would be the primary 
+split, and we can't apply the primary split to the missing values.  This means 
+that our best split will be applying the primary split to the non-missing 
+values and classifying missing values to the appropriate daughter region by 
+using the surrogate variable.
 
 \end{document}
