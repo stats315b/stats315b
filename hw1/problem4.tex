@@ -25,7 +25,7 @@
 \framebox{\parbox{6.5in}{
 {\bf{STATS 315B: Data Mining, Spring 2016}}\\
 {\bf Homework 1, Due 4/28/2016}\\
-{\bf Completed by: Henry Neeb, Christopher Kurrus, and Tyler Chase}
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
 }}
 \ \\
 \end{center}
@@ -35,8 +35,33 @@
 $$Population Risk: R(F) = E_{xy}L(Y,F(\underline{X}))$$
 $$ Empirical Risk: R(F) = \frac{1}{N}\sum_{i=1}^NL(Y_i, F(\underline{X}_i))$$ 
 
-The empirical risk does not average over all possible X distributions so $F(\underline{X})$ is thus more likely to overfit a data set $\{\underline{X}_i, Y_i\}_1^N$, if we use the empirical risk to find optimal F ($F^* = argmin_FR(F)$). If we approximate Y by $Y=F^*(\underline{X}) + \epsilon$ we in other words run the risk of our model $F^*$ following the specific random noise $\epsilon$ in our training set when using empirical risk as opposed to population risk. It is possible for the empirical risk to be zero while the population risk is very large if we consider a function that doesn't behave the appropriate way for the data we are considering, but passes through all of the  data points. 
+\vspace{5 mm}
+\noindent
+The empirical risk does not average over all possible X distributions so 
+$F(\underline{X})$ is thus more likely to overfit a data set 
+$\{\underline{X}_i, Y_i\}_1^N$, if we use the empirical risk to find optimal F 
+($F^* = argmin_FR(F)$). If we approximate Y by 
+$Y=F^*(\underline{X}) + \epsilon$ we in other words run the risk of our model 
+$F^*$ following the specific random noise $\epsilon$ in our training set when 
+using empirical risk as opposed to population risk. It is possible for the 
+empirical risk to be zero while the population risk is very large if we 
+consider a function that doesn't behave the appropriate way for the data we are 
+considering, but passes through all of the  data points. 
 
-Empirical risk can be expected to be a good surrogate when you choose an appropriate function class $\mathscr{F}$ (where $\hat{F}(\underline{X}) \in \mathscr{F}$) that will prevent overfitting (increasing variance) on the training set $\{\underline{X}_i, Y_i\}_1^N$. Overfitting can also be mitigated by collecting or using much more data. 
+\vspace{5 mm}
+\noindent
+Empirical risk does not perform well as a surrogate to prediction risk when 
+you have poorly sampled your training data. That is, you did not sample your 
+training data from the same distribution as your population data.
+
+\vspace{5 mm}
+\noindent
+Empirical risk can be expected to be a good surrogate when you choose an 
+appropriate function class $\mathscr{F}$ (where 
+$\hat{F}(\underline{X}) \in \mathscr{F}$) that will prevent overfitting 
+(increasing variance) on the training set $\{\underline{X}_i, Y_i\}_1^N$. 
+Overfitting can also be mitigated by collecting or using much more data such 
+that the data is sampled from the population distribution. Also, using cross 
+validation with testing and training data will help reduce over fitting.
 
 \end{document}
