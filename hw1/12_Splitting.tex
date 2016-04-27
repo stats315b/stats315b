@@ -48,13 +48,15 @@ erroneously.
 \item If you start with homogenous data (i.e. you have roughly the same amount 
 of different types of responses) and you are far enough down the tree to have a 
 fairly pure node, it might be better to just predict at the node rather than 
-guessing. Guessing at the node will reduce the compounded variance of 
-prediction observed by sending your observation further down the tree.
+guessing which direction to go. Predicting at the node will reduce the 
+compounded variance of prediction observed by sending your observation further 
+down the tree.
 \end{itemize}
 
 \vspace{2 mm}
 \noindent
-The following are reasons and situations where this might be bad
+The following are reasons and situations where treating the node as terminal 
+might perform worse than using a surrogate variable:
 
 \begin{itemize}
 \item If you have lop-sided training data (that is you have far more 
@@ -87,7 +89,8 @@ go in that direction.
 
 \vspace{2 mm}
 \noindent
-This method performs poorly when
+The following are reasons why splitting by majority of where the training data 
+goes might perform poorly when compared to the surrogate method:
 
 \begin{itemize}
 \item Splits between two child nodes contain nearly half of the data from the 
