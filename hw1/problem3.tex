@@ -25,7 +25,7 @@
 \framebox{\parbox{6.5in}{
 {\bf{STATS 315B: Data Mining, Spring 2016}}\\
 {\bf Homework 1, Due 4/28/2016}\\
-{\bf Completed by: Henry Neeb, Christopher Kurrus, and Tyler Chase}
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
 }}
 \ \\
 \end{center}
@@ -36,8 +36,18 @@ $$Target Function: F^* = argmin_FR(F)$$
 $$Risk Function: R(F) = E_{XY}L(Y, F(\underline{X})$$
 $$Loss Criterion: L(Y,F(\underline{X}))$$
 
-Y is the actual output and \underline{X} is a vector of predictors. The target function is not always an accurate function for prediction. Even if the target function predicts accurately with cross vallidation on the training set, the correlations between the output and predictors could change as a function of time. This would result in inaccurate future predicitons. 
+\vspace{5 mm}
+\noindent
+Y is the actual output and \underline{X} is a vector of predictors. Even though 
+The target function is the optimal function to minimize prediction risk, it is 
+not always an accurate function for prediction. It could be that there is very 
+little signal between the predictors and the response. That is, there is very 
+low signal to noise.
 
-It could also be inaccurate if there is little to no correlation between the predictors and output to begin with; or if the signal to noise is too low. 
+\vspace{5 mm}
+\noindent
+This could arise when your predictors do not do well at predicting your 
+response. This could arise over time as well when your problem exhibits 
+concept drift.
 
 \end{document}
