@@ -27,7 +27,7 @@
 \framebox{\parbox{6.5in}{
 {\bf{STATS 315B: Data Mining, Spring 2016}}\\
 {\bf Homework 1, Due 4/28/2016}\\
-{\bf Completed by: Henry Neeb, Christopher Kurrus, and Tyler Chase}
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Yash Vyas, and Tyler Chase}
 }}
 \ \\
 \end{center}
@@ -38,6 +38,6 @@
 
 \vspace{5 mm}
 \noindent
-Surrogate splits are used primarily in cases where you have missing data, or when you want to reveal common patterns among your features.  In these circumstances, they serve as a functional replacemnet for the primary split, attempting to mimic or substitute for the missing data.  It is important to note, however, that surrogate splits do not always provide a perfect estimation of the primary split and may not perform as well.  The data that we are currently handling has already been pared down to the pool of questionnaires that had non-missing answers to our response variable, and we have 13 other demographic attributes to use in constructing our tree, so it is reasonable to infer that we can construct a tree using a primary split without causing problems.  Considering this, a surrogate split could be utilized, but as we can use our primary split there is no reason to attempt to estimate it by proxy. 
+It would be incorrect to use surrogate splits to predict the outcome variable, as opposed to using the primary split, because it will not result in an optimal (best) split.  We know that the surrogate split will not be optimal for the points where we have non-missing values, as otherwise it would be the primary split, and we can't apply the primary split to the missing values.  This means that our best split will be applying the primary split to the non-missing values and the surrogate split to the missing values. 
 
 \end{document}

@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{enumerate}
+\usepackage{mdframed}
+\usepackage{mathrsfs}
+
+
+
+\begin{document}
+\begin{center}
+%---------------------------------------------------------------------------------------
+%---------------------------------Header------------------------------------------------
+%---------------------------------------------------------------------------------------
+
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, and Tyler Chase}
+}}
+\ \\
+\end{center}
+\section*{Problem 11}
+\setlength{\parindent}{0pt}
+
+The goal is to derive an updating formula for calculating the change in improvement  in prediction risk as a result of a split when the split is modified by one observation changing sides. 
+
+In problem 10 we showed that the improvement in prediction risk as a result of a split is 
+
+$$ \frac{n_ln_r}{n}\big(\bar{y}_l - \bar{y}_r\big)^2$$
+
+Assume the convention that an observation moving from the left to right daughter is positive and label the observation as $(\underline{x}_k, y_k)$
+
+\begin{equation}
+n_l \rightarrow n_l - 1
+\end{equation}
+
+\begin{equation}
+n_r \rightarrow n_r + 1
+\end{equation}
+
+\begin{equation}
+\bar{y}_l = \frac{1}{n_l}\sum_{\underline{x}_i \in R_m^{(l)}}y_i
+\end{equation}
+
+\begin{equation}
+\bar{y}_r = \frac{1}{n_r}\sum_{\underline{x}_i \in R_m^{(r)}}y_i
+\end{equation}
+
+\begin{equation}
+\sum_{ \underline{x}_i \in R_m^{(l)}} y_i \rightarrow \bigg( \sum_{ \underline{x}_i \in R_m^{(l)}}y_i \bigg) - y_k
+\end{equation}
+
+\begin{equation}
+\sum_{ \underline{x}_i \in R_m^{(r)}} y_i \rightarrow \bigg( \sum_{ \underline{x}_i \in R_m^{(r)}}y_i \bigg) - y_k
+\end{equation}
+
+$$(1), (3), (5) \Rightarrow \bar{y}_l = \frac{1}{n_l}\sum_{\underline{x}_i \in R_m^{(l)}}y_i \rightarrow \frac{1}{n_l-1}\Bigg[\bigg(\sum_{\underline{x}_i \in R_m^{(l)}}y_i\bigg)-y_k\Bigg] = \frac{n_l}{n_l-1}\Bigg[\bigg(\frac{1}{n_l}\sum_{\underline{x}_i \in R_m^{(l)}}y_i\bigg) - \frac{y_k}{n_l}\Bigg]$$
+
+\begin{equation}
+\bar{y}_l \rightarrow \frac{n_l}{n_l-1}\bar{y}_l - \frac{y_k}{n_l-1}
+\end{equation}
+
+$$(2), (4), (6) \Rightarrow \bar{y}_r = \frac{1}{n_r}\sum_{\underline{x}_i \in R_m^{(r)}}y_i \rightarrow \frac{1}{n_r+1}\Bigg[\bigg(\sum_{\underline{x}_i \in R_m^{(r)}}y_i\bigg)+y_k\Bigg] = \frac{n_r}{n_r+1}\Bigg[\bigg(\frac{1}{n_r}\sum_{\underline{x}_i \in R_m^{(r)}}y_i\bigg) + \frac{y_k}{n_r}\Bigg]$$
+
+\begin{equation}
+\bar{y}_r \rightarrow \frac{n_r}{n_r+1}\bar{y}_r - \frac{y_k}{n_r+1}
+\end{equation}
+
+$$(1), (2), (7), (8) \Rightarrow \frac{n_ln_r}{n} \big(\bar{y}_l - \bar{y}_r\big)^2 \rightarrow \frac{(n_l-1)(n_r+1)}{n}\bigg(\frac{n_l}{n_l+1}\bar{y}_l - \frac{y_k}{n_l-1} - \frac{n_r}{n_r+1}\bar{y}_r - \frac{y_k}{n_r + 1}\bigg)^2$$
+
+\end{document}
