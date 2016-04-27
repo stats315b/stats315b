@@ -36,6 +36,8 @@
 %---------------------------------Answer------------------------------------------------
 %---------------------------------------------------------------------------------------
 
+\section*{Problem 9}
+
 \vspace{5 mm}
 \noindent
 To show that the minimizing values of $\hat{c}_{m}$ are given by $\sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{m})) / \sum\limits_{i=0}^N (I(x_{i} \in R_{m}))$ we will expand upon our given functions.
@@ -54,18 +56,27 @@ Now our goal is to find the minimizing value $min_{c_{m}}[\sum\limits_{i=1}^N (y
 
 \vspace{3 mm}
 \noindent
-Considering that $I(x_{i} \in R_{m})$ will return 1 when $x_{i} \in R_{m}$ and 0 otherwise, we can represent this criterion more clearly by using careful summation notation and eliminating our $I()$ term.
+We will do this using differentiation.  $\frac{d}{dc_{m}}[\sum\limits_{i=1}^N (y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))^2] = $
 
 \vspace{3 mm}
 \noindent
-We can restate as $min_{c_{m}}[\sum\limits_{m=1}^M \sum\limits_{(x_{i},y_{i})|x_{i} \in R_{m}} (y_{i} - c_{m})^2]$
+$\sum\limits_{i=1}^N [2(y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))(-\sum\limits_{m=1}^M (I(x_{i} \in R_{m})))]$
 
 \vspace{3 mm}
 \noindent
-This representation allows us to see what is happening much more clearly, for each $m$ we sum $ (y_{i} - c_{m})^2 $ for each $x_{i} \in R_{m}$
+And setting equal to 0 we have $\sum\limits_{i=1}^N [2(\sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})) - y_{i})]$ 
+
+
+
+
+
 
 \vspace{3 mm}
 \noindent
-Now that we have the proper representation, it is obvious to see that our solution must be the mean on the training data outcome values for the observations within each region, \newline i.e. $ \hat{c}_{m} = \sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{m})) / \sum\limits_{i=0}^N (I(x_{i} \in R_{m}))$
+$ \hat{c}_{m}\sum\limits_{i=0}^N (I(x_{i} \in R_{m})) - \sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{m})) = 0$
+
+\vspace{3 mm}
+\noindent
+So simplifying $ \hat{c}_{m} = \sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{m})) / \sum\limits_{i=0}^N (I(x_{i} \in R_{m}))$
 
 \end{document}
