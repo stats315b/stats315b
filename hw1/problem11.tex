@@ -23,7 +23,7 @@
 \framebox{\parbox{6.5in}{
 {\bf{STATS 315B: Data Mining, Spring 2016}}\\
 {\bf Homework 1, Due 4/28/2016}\\
-{\bf Completed by: Henry Neeb, Christopher Kurrus, and Tyler Chase}
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
 }}
 \ \\
 \end{center}
@@ -74,6 +74,13 @@ $$(2), (4), (6) \Rightarrow \bar{y}_r = \frac{1}{n_r}\sum_{\underline{x}_i \in R
 \bar{y}_r \rightarrow \frac{n_r}{n_r+1}\bar{y}_r - \frac{y_k}{n_r+1}
 \end{equation}
 
+Below is the improvement in making a split as a function of the original variables, with one point moved from the left daughter region to the right daughter region. 
+
 $$(1), (2), (7), (8) \Rightarrow \frac{n_ln_r}{n} \big(\bar{y}_l - \bar{y}_r\big)^2 \rightarrow \frac{(n_l-1)(n_r+1)}{n}\bigg(\frac{n_l}{n_l+1}\bar{y}_l - \frac{y_k}{n_l-1} - \frac{n_r}{n_r+1}\bar{y}_r - \frac{y_k}{n_r + 1}\bigg)^2$$
+
+Below is the improvement as one point is moved from the left daughter region to the right daughter region. 
+
+$$\frac{n_ln_r}{n} \big(\bar{y}_l - \bar{y}_r\big)^2 - \frac{(n_l-1)(n_r+1)}{n}\bigg(\frac{n_l}{n_l+1}\bar{y}_l - \frac{y_k}{n_l-1} - \frac{n_r}{n_r+1}\bar{y}_r - \frac{y_k}{n_r + 1}\bigg)^2$$
+
 
 \end{document}

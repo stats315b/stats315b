@@ -56,7 +56,7 @@ Now our goal is to find the minimizing value $min_{c_{m}}[\sum\limits_{i=1}^N (y
 
 \vspace{3 mm}
 \noindent
-partial derivative on cm for arbitrary region m
+We will find our minimizing values by taking the partial derivative on $c_{m}$ for an arbitrary region m.
 
 \vspace{3 mm}
 \noindent
@@ -64,7 +64,7 @@ $\frac{d}{dc_{m}}[\sum\limits_{i=1}^N (y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i}
 
 \vspace{3 mm}
 \noindent
-distributing indicator term that has chosen m to non chosen m - for y stays - for cm because disjoint subset every cross term goes to zero - ind to the 2 is ind
+Now that we have done our differentiation we simplify our terms by distributing the indicator term that is evaluating on our chosen m to the remaining terms that are non-chosen values of m. For our $y_{i}$ term the indicator stays, but this isn't true for all values in the summation for $(c_{m}I(x_{i} \in R_{m}))$.  We know that the regions are all disjoint, so every cross term between our indicator for the chosen region, and indicators for every other region will evaluate to zero.  This leaves only the $(c_{m}I(x_{i} \in R_{m}))I(x_{i} \in R_{m})$ term, but the indicator squared is merely the indicator, so we end up with the statement below.
 
 \vspace{3 mm}
 \noindent
