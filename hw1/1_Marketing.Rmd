@@ -1,13 +1,13 @@
 ---
 title: "Probelem 1 - Data Mining Marketing"
-author: "Henry Neeb, Christopher Kurrus, Tyler Chase"
-date: "April 16, 2016"
+author: "Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas"
+date: "April 26, 2016"
 output: pdf_document
 ---
 
 ## Libraries
 
-```{r}
+```{r, cache=TRUE, message=FALSE}
 library(ggplot2)
 library(dplyr)
 library(readr)
@@ -19,7 +19,7 @@ library(rattle)
 
 ## File Parameters
 
-```{r}
+```{r, cache=TRUE}
 # Session -> set working directory -> Source file location
 
 # Path for data
@@ -30,7 +30,31 @@ ext <- paste(data_path, file, sep = "")
 
 ## Read in Data
 
-```{r}
+The data does not have any column headers, so we have to manually assign the 
+column names. Our variables are also all categorical variables, some with an 
+order relationship and some with out. We also have to import these values as 
+factors, specifying if they have an order relationship or not. The following 
+variables have an order relationship:
+
+* Income
+* Age
+* Education
+* Amount of time living in the bay area
+* Household count
+* Minors in household count
+
+The remaining variables do not have an order relationship:
+
+* Sex
+* Marital status
+* Occupation
+* Dual income status
+* Whether you rent or own a house
+* Type of house you live in
+* Ethnicity
+* Languages
+
+```{r, cache=TRUE}
 # Name of the variables imported
 var_names = c("income",
               "sex",
@@ -63,68 +87,27 @@ var_type <- cols(col_factor(sprintf("%i", 1:9), ordered =  TRUE), # income
                  col_factor(sprintf("%i", 1:8), ordered = FALSE), # ethnicity
                  col_factor(sprintf("%i", 1:3), ordered = FALSE)) # language
 
-var_type <- cols(col_factor(sprintf("%i", 1:9), ordered = FALSE), # income
-                 col_factor(sprintf("%i", 1:2), ordered = FALSE), # sex
-                 col_factor(sprintf("%i", 1:5), ordered = FALSE), # marital stat
-                 col_factor(sprintf("%i", 1:7), ordered = FALSE), # age
-                 col_factor(sprintf("%i", 1:6), ordered = FALSE), # education
-                 col_factor(sprintf("%i", 1:9), ordered = FALSE), # occupation
-                 col_factor(sprintf("%i", 1:5), ordered = FALSE), # bay duration
-                 col_factor(sprintf("%i", 1:3), ordered = FALSE), # dual income
-                 col_factor(sprintf("%i", 1:9), ordered = FALSE), # house count
-                 col_factor(sprintf("%i", 0:9), ordered = FALSE), # minor count
-                 col_factor(sprintf("%i", 1:3), ordered = FALSE), # rent/own
-                 col_factor(sprintf("%i", 1:5), ordered = FALSE), # house type
-                 col_factor(sprintf("%i", 1:8), ordered = FALSE), # ethnicity
-                 col_factor(sprintf("%i", 1:3), ordered = FALSE)) # language
-
 df <- read_csv(file = ext, 
                col_names = var_names, 
                col_types = var_type)
 ```
 
-The data does not have any column headers, so we have to manually assign the 
-column names. Our variables are also all categorical variables, some with an 
-order relationship and some with out. We also have to import these values as 
-factors, specifiying if they have an order relationship or not. The following 
-variables have an order relationship:
-
-* Income
-* Age
-* Education
-* Amount of time living in the bay area
-* Household count
-* Minors in household count
-
-The remaining variables do not have an order relationship:
-
-* Sex
-* Marital status
-* Occupation
-* Dual income status
-* Whether you rent or own a house
-* Type of house you live in
-* Ethnicity
-* Languages
-
 ## Fit a Maximal Tree Model for Pruning
 
-We will first fit a tree with a low complexity paramter so that we can observe 
+We will first fit a tree with a low complexity parameter so that we can observe 
 it's behavior and decide on an optimal parameter based on cross validation 
 error. We will use the following control parameters:
 
 * 10-fold cross validation
-* 100 minsplit
 * Use default surrogate parameters, except split by majority if split data and 
 all surrogate information is missing.
 * Use a low complexity parameter of 0.00001
 
-```{r}
+```{r, cache=TRUE}
 # Modify tree control parameters. Specify 10-fold cross validation, low cost, 
 # minimum split needs at least 100 observations, and specify use correlation 
 # surrogate if possible, else use majority
 control_parms <- rpart.control(xval = 10L, 
-                               minsplit = 100, 
                                usesurrogate = 2,
                                cp = .00001)
 
@@ -138,8 +121,7 @@ fit <- rpart(formula = income ~ .,
 Let us now look at cross-validation error versus our complexity parameter, as 
 well as a summary of our model and cross-validation error.
 
-```{r}
-printcp(fit)
+```{r, cache=TRUE}
 plotcp(fit)
 ```
 
@@ -148,7 +130,7 @@ standard error. We will use this rule for selecting a model - the model with
 the largest complexity parameter that produces a cross-validation error just 
 below the sum of the two aforementioned values.
 
-```{r}
+```{r, cache=TRUE}
 # Find the index where cross validation is minimized to implement 1-SE rule
 xerror_list <- fit$cptable[,"xerror"]
 min_idx <- as.integer(which.min(xerror_list))
@@ -160,47 +142,121 @@ opt_cp <- 1.0
 for (i in seq_len(length(xerror_list))){
   if (xerror_list[i] < se_cutoff){
     opt_cp <- as.numeric(fit$cptable[,"CP"][i])
+    opt_address <- i
     break
   }
 }
 ```
 
 We will now prune the true according to this 1-Standard Error Rule complexity 
-parameter and replot and print the complexity parameter.
+parameter and re-plot and print the complexity parameter.
 
-```{r}
+```{r, cache=TRUE}
 pruned_fit <- prune(tree = fit, cp = opt_cp)
 
 plotcp(pruned_fit)
-printcp(pruned_fit)
 ```
 
-This will be our optimal tree. Lets look at a nice plot.
+This Tree is still too big. The problem states to get a tree at most as big as 
+10 nodes, we will need to prune this tree until we have less than 10 terminal 
+nodes.
+
+```{r, cache=TRUE}
+pruned_fit <- prune(tree = fit, cp = 0.005)
+
+# Overwrite optimal address
+opt_address <- dim(pruned_fit$cptable)[1] 
+plotcp(pruned_fit)
+```
+
+This will be our final tree. In order to get the training error the root node 
+error is multiplied times the relative error. In order to get the test error 
+the root node error is multiplied times the xerror. 
 
 ```{r}
+# Retrieve cross-validation error.
+root_node_error <- pruned_fit$frame[1, 'dev']/fit$frame[1, 'n']
+rel_error <- pruned_fit$cptable[opt_address,"rel error"]
+xerror <- pruned_fit$cptable[opt_address,"xerror"]
+train_error <- rel_error * root_node_error
+test_error <- xerror * root_node_error
+splits <- pruned_fit$cptable[opt_address, "nsplit"]
+```
+
+\newpage
+
+# Report
+
+## Final Decision Tree - Predicting Income
+
+```{r, cache=TRUE}
 fancyRpartPlot(model = pruned_fit, 
-               main = "Pruned Decision Tree", 
+               main = "", 
                sub = "")
 ```
 
+## Decision Tree Interpretation
 
+Note, our optimal tree was more than 10 nodes. We trimmed our tree to fit the 
+10 node rule. Please see the attached code and fits for our methodology.
 
+The variables that are used within our optimal decision tree to predict income 
+are:
 
-prune_fit <- prune(tree = fit, cp = 0.004)
+* Occupation
+* Age
+* Marital status
+* Rent or own (household status)
 
-print(prune_fit)
+For the first branch, we start with our root node that splits on occupation. We 
+notice that a prediction is made from the root node on occupations 6 and 9 
+(unemployed and student). They are predicted to be in the lowest income 
+bracket (less than $10,000), which is to be expected since the unemployed do 
+not have a jab to make money with and students are not expected to be working. 
+For all other occupations, we then split on householder status. Those who own 
+their own house are separated from those who rent or live with parents. Those 
+who own their own home are predicted to be in the second highest income bracket 
+(between $50,000 and $74,999). Those who do not own their own homes are further 
+split by age. The bottom age groups (24 or younger) are predicted to be in the 
+lowest income bracket (less than $10,000), where others are split on 
+occupation. Those who are not managers are split from managers. Both splits are 
+then split by marital status and predicted upon. Managers who are not married or 
+living with someone and non-managers who are married are in the $30,000 to 
+$39,999 income bracket. Managers who are married or living with someone are in 
+the $50,000 and $74,999 bracket. Non-managers who are not married are in the 
+$20,000 and $24,999 bracket.
 
-plotcp(fit)
-print(fit)
+The marriatal status split is interesting, because it may illuminate how the 
+data was collected. It seems that those married or living with someone make 
+more money than their non-married counterparts. It is quite possible that 
+income reported is household income, and thus we are observing a double income 
+effect from money earned from their spouses.
 
-plot(prune_fit, uniform = TRUE)
-text(prune_fit, use.n = TRUE)
+We now examine the quality of our model for predicting income. We observe that 
+the training misclassification error of our decision tree is `r train_error`. 
+The test misclassification error is `r test_error`. Although our model appears 
+to classify better than at random (which would have on average approximately 
+89% misclassification), our model has fairly poor predictive power. This 
+probably has to due with the fact that we are trying to classify nine different 
+income categories, so to even be able to span our predictive space, we would 
+need to split the data at least nine times. We would need to split our data 
+several times to even predict every category. In our trimmed model, we note 
+that we don't even predict all 9 possible income categories, meaning for any 
+given income bracket not in our model, we have no hope of predicting them.
 
-# Save file of tree image
-post(tree = prune_fit, filename = "Income.ps", horizontal = FALSE)
+We use surrogate splits when predicting. A surrogate split is used when trying 
+to classify an observation at a node where the node is split on a variable for 
+which the observation does not have data. The surrogate variable is a variable 
+that is correlated with the primary split variable. All of our nodes utilize 
+surrogate variables. For example, our root node has age as a surrogate. So, if 
+an observation was missing an occupation entry, we would first look at the age 
+recorded on the observation (if they had it). Assuming they do, we would 
+then send it left if the observation's age was in the first category (age 
+under 18), and right for all other ages. The data is split on the primary 
+split, but observations are classified to either right or left of the primary 
+split.
 
-# Alternate tree image
-prp(x = fit)
-```
-
-
+We will now make a prediction on our household income. We start at the 
+occupation node. It asks if we are students or unemployed. We are students, so 
+we follow left on the tree. We then reach our predicted income of under $10,000 
+annually.
