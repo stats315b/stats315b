@@ -14,13 +14,17 @@
 \usepackage{enumerate}
 \usepackage{mdframed}
 
+\DeclareMathOperator*{\argmin}{argmin}
+\newcommand*{\argminl}{\argmin\limits}
 
 \begin{document}
 \begin{center}
-%---------------------------------------------------------------------------------------
-%---------------------------------Header------------------------------------------------
-%---------------------------------------------------------------------------------------
 
+
+
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 3-------------------------------------
+%-------------------------------------------------------------------------------
 \framebox{\parbox{6.5in}{
 {\bf{STATS 315B: Data Mining, Spring 2016}}\\
 {\bf Homework 1, Due 4/28/2016}\\
@@ -29,5 +33,545 @@
 \ \\
 \end{center}
 
+\section*{Problem 3}
+
+$$Target Function: F^* = argmin_FR(F)$$
+$$Risk Function: R(F) = E_{XY}L(Y, F(\underline{X})$$
+$$Loss Criterion: L(Y,F(\underline{X}))$$
+
+\vspace{5 mm}
+\noindent
+Y is the actual output and \underline{X} is a vector of predictors. Even though 
+The target function is the optimal function to minimize prediction risk, it is 
+not always an accurate function for prediction. It could be that there is very 
+little signal between the predictors and the response. That is, there is very 
+low signal to noise.
+
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 4-------------------------------------
+%-------------------------------------------------------------------------------
+\newpage
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 4}
+
+$$Population Risk: R(F) = E_{xy}L(Y,F(\underline{X}))$$
+$$ Empirical Risk: R(F) = \frac{1}{N}\sum_{i=1}^NL(Y_i, F(\underline{X}_i))$$ 
+
+\vspace{5 mm}
+\noindent
+The empirical risk does not average over all possible X distributions so 
+$F(\underline{X})$ is thus more likely to overfit a data set 
+$\{\underline{X}_i, Y_i\}_1^N$, if we use the empirical risk to find optimal F 
+($F^* = argmin_FR(F)$). If we approximate Y by 
+$Y=F^*(\underline{X}) + \epsilon$ we in other words run the risk of our model 
+$F^*$ following the specific random noise $\epsilon$ in our training set when 
+using empirical risk as opposed to population risk. It is possible for the 
+empirical risk to be zero while the population risk is very large if we 
+consider a function that doesn't behave the appropriate way for the data we are 
+considering, but passes through all of the  data points. 
+
+\vspace{5 mm}
+\noindent
+Empirical risk does not perform well as a surrogate to prediction risk when 
+you have poorly sampled your training data. That is, you did not sample your 
+training data from the same distribution as your population data.
+
+\vspace{5 mm}
+\noindent
+Empirical risk can be expected to be a good surrogate when you choose an 
+appropriate function class $\mathscr{F}$ (where 
+$\hat{F}(\underline{X}) \in \mathscr{F}$) that will prevent overfitting 
+(increasing variance) on the training set $\{\underline{X}_i, Y_i\}_1^N$. 
+Overfitting can also be mitigated by collecting or using much more data such 
+that the data is sampled from the population distribution. Also, using cross 
+validation with testing and training data will help reduce over fitting.
+
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 5-------------------------------------
+%-------------------------------------------------------------------------------
+\newpage
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 5}
+
+\vspace{5 mm} 
+\noindent 
+Searching over the entire space of function is both computationally infeasible 
+(you cannot possibly hope to search over an infinite space) and it would most 
+likely yield suboptimal results. We define our target function as follows:
+
+\begin{gather*}
+F^{*} = \argminl_{F} R(F) = \argminl_{F} E_{XY}[L(y, F(x))]
+\end{gather*}
+
+\noindent
+Where:
+
+\begin{itemize}
+\item $L(y, F(x)) \ge 0$
+\item $y = F(x) \rightarrow L(y, F(x)) = 0$
+\end{itemize}
+
+\noindent
+In practice, we typically estimate the target function by minimizing the
+empirical risk over the training data as a surrogate to minimizing the
+prediction risk. So if we develop our model such that $F(x) = y$ for our
+training data, we will have found a model such that its total training loss is
+$0$ and our empirical risk on the training data is absolutely minimized. There 
+is not only just one such model that will fit your training data exactly, but
+infinitely many models. Your search for the function that minimizes empirical
+risk will then conclude with a set of infinitely many functions to choose from
+as your best approximation for the target function.
+
+\vspace{5 mm}
+\noindent
+Not only will it be infeasible to distinguish between these infinitely many
+functions, but all of the functions returned will most likely be nowhere near a
+good approximation to the target function. This is due to the fact your training
+data is random itself and has noise. When you fit the training data exactly, you
+are almost guaranteed to be over-fitting since you will be modeling the noise
+exhibited in your particular training data. When you start fitting the noise,
+your function loses its ability to predict on new data because that new data may
+have the same signal as the old data, but it has different noise. As such, your 
+model will exhibit prediction error, and most likely will have more prediction 
+error than if you chose a model by restriction the function class to search 
+over.
+
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 6-------------------------------------
+%-------------------------------------------------------------------------------
+\newpage
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 6}
+
+\vspace{5 mm}
+\noindent
+Bias and variance are two sources of error that occur when searching for the 
+target function. {\bf Bias} is the error associated with your expected model 
+not being able to predict the target model. Bias occurs when you make 
+assumptions about your target function and restrict your search to a specific 
+function class, which almost certainly will not contain the target function. 
+Since the target function is outside of the class you are searching over, you 
+can never expect to predict the true target function.
+
+\vspace{5 mm}
+\noindent
+{\bf Variance} is the error associated with how different a model you are 
+expected to fit is within a chosen function class. Typically, the more 
+restrictive the search space, the less the variance because the possibilities of 
+models chosen given your training data is that much less.
+
+\vspace{5 mm}
+\noindent
+The {\bf bias-variance tradeoff} comes from the tradeoff of trying to be broad 
+and flexible in your search of the target function in order to actually be more 
+likely to recover it in your search (reducing bias), but not being too 
+unrestrictive in your search as to have a volatile model (that is a model that 
+will change dramatically with small changes in the training data). That is, 
+reducing bias (expanding your search region for the target function), is often 
+at odds with reducing variance (restricting your search region to have a more 
+stable model). You will often never be able to eliminate both, and when trying 
+to reduce your overall error, you will need to make concessions to both types 
+of error when evaluating a model.
+
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 8-------------------------------------
+%-------------------------------------------------------------------------------
+\newpage
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 8}
+
+\vspace{5 mm}
+\noindent
+It would be incorrect to use surrogate splits to predict the outcome variable, 
+as opposed to using the primary split, because it will not result in an optimal 
+(best) split.  We know that the surrogate split will not be optimal for the 
+points where we have non-missing values, as otherwise it would be the primary 
+split, and we can't apply the primary split to the missing values.  This means 
+that our best split will be applying the primary split to the non-missing 
+values and classifying missing values to the appropriate daughter region by 
+using the surrogate variable.
+
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 9-------------------------------------
+%-------------------------------------------------------------------------------
+\newpage
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 9}
+
+\vspace{5 mm}
+\noindent
+To show that the minimizing values of $\hat{c}_{m}$ are given by 
+$\sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{m})) / 
+\sum\limits_{i=0}^N (I(x_{i} \in R_{m}))$ 
+we will expand upon our given functions.
+
+\vspace{3 mm}
+\noindent
+We know our criterion is $\sum\limits_{i=1}^N (y_{i} - F(x_{i}))^2$ and we have 
+$F(x) = \sum\limits_{m=1}^M (c_{m}I(x \in R_{m}))$
+
+\vspace{3 mm}
+\noindent
+Proceeding, we can expand our criterion into 
+$\sum\limits_{i=1}^N (y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))^2$
+
+\vspace{3 mm}
+\noindent
+Now our goal is to find the minimizing value 
+$min_{c_{m}}[\sum\limits_{i=1}^N (y_{i} - 
+\sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))^2]$ 
+
+\vspace{3 mm}
+\noindent
+We will find our minimizing values by taking the partial derivative on $c_{m}$ 
+for an arbitrary region m.
+
+\vspace{3 mm}
+\noindent
+$\frac{d}{dc_{m}}[\sum\limits_{i=1}^N (y_{i} - 
+\sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))^2] = 
+2\sum\limits_{i=1}^N [(y_{i} - \sum\limits_{m=1}^M (c_{m}I(x_{i} \in R_{m})))
+(I(x_{i} \in R_{m}))]$ 
+
+\vspace{3 mm}
+\noindent
+Now that we have done our differentiation we simplify our terms by distributing 
+the indicator term that is evaluating on our chosen m to the remaining terms 
+that are non-chosen values of m. For our $y_{i}$ term the indicator stays, but 
+this isn't true for all values in the summation for 
+$(c_{m}I(x_{i} \in R_{m}))$.  We know that the regions are all disjoint, so 
+every cross term between our indicator for the chosen region, and indicators 
+for every other region will evaluate to zero.  This leaves only the 
+$(c_{m}I(x_{i} \in R_{m}))I(x_{i} \in R_{m})$ term, but the indicator squared 
+is merely the indicator, so we end up with the statement below.
+
+\vspace{3 mm}
+\noindent
+$\sum\limits_{i=1}^N [y_{i}I(x_{i} \in R_{m}) - c_{m}I(x_{i} \in R_{m})] = 0$ 
+
+\vspace{3 mm}
+\noindent
+Splitting the summation we have 
+$\sum\limits_{i=1}^N (y_{i}I(x_{i} \in R_{m}) - 
+c_{m}\sum\limits_{i=1}^N (I(x_{i} \in R_{m}) = 0$
+
+\vspace{3 mm}
+\noindent
+So simplifying, 
+${c}_{m} = \frac{\sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{m}))}
+{\sum\limits_{i=0}^N (I(x_{i} \in R_{m}))}$ 
+as desired.
+
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 10------------------------------------
+%-------------------------------------------------------------------------------
+\newpage
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 10}
+\setlength{\parindent}{0pt}
+
+From the lecture notes the improvement in square error risk when one of the 
+regions $R_m$ is split into daughter regions $R_m \to R_l \cup R_r$
+
+$\underset{x}{\operatorname{argmax}}$
+
+\begin{equation}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \sum_{\underline{X}_i \in R_m} \Bigg\{\Big[y_i-\bar{y}_m\Big]^2-\Big[y_i - \bar{y}_m^{(l)}I(\underline{X}_i \in R_m^{(l)})-\bar{y}_m^{(r)}I(\underline{X}_i \in R_m^{(r)})\Big]^2\Bigg\}
+\end{equation}
+
+We now expand the squared terms. 
+
+\begin{equation}
+\begin{split}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \sum_{\underline{X}_i \in R_m} \Bigg\{(y_i^2-y_i^2) -2y_i\bar{y}_m + \bar{y}_m^2 +2y_i\bar{y}_m^{(l)}I(X_i \in R_m^{(l)}) +2y_i\bar{y}_m^{(r)}I(\underline{X}_i \in R_m^{(r)}) \\- 2y_m^{(l)}I(\underline{X}_i \in R_m^{(l)})\bar{y}_m^{(r)}I(\underline{X}_i \in R_m^{(r)})-[\bar{y}_m^{(l)}I(\underline{X}_i \in R_m^{(l)})]^2-[\bar{y}_m^{(r)}I(\underline{X}_i \in R_m^{(r)})]^2\Bigg\}
+\end{split}
+\end{equation}
+
+Cancel the two $y_i^2$ terms. Since $R_m^{(l)} \cap R_m^{(r)} = 0$ the term  
+$2y_m^{(l)}I(\underline{X}_i \in R_m^{(l)})\bar{y}_m^{(r)}I(\underline{X}_i \in R_m^{(r)})$ 
+cancels. Also note that $I(\underline{X}_i \in R)^2 = I(\underline{X}_i \in R)$.
+
+\begin{equation}
+\begin{split}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \sum_{\underline{X}_i \in R_m} \Bigg\{-2y_i\bar{y}_m + \bar{y}_m^2 + 2y_i\bar{y}_m^{(l)}I(\underline{X}_i \in R_m^{(l)}) + 2y_i\bar{y}_m^{(r)}I(\underline{X}_i \in R_m^{(r)})\\ - [\bar{y}_m^{(l)}]^2I(\underline{X}_i \in R_m^{(l)}) - [\bar{y}_m^{(r)}]^2I(\underline{X}_i \in R_m^{(r)})\Bigg\}
+\end{split}
+\end{equation}
+
+Next we use the fact that 
+$\sum_{\underline{X_i} \in R_m} y_i = N_m\frac{1}{N_m} \sum_{\underline{X}_i \in R_m}y_i = N_m \bar{y}_m$
+
+\begin{equation}
+\begin{split}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \Bigg\{-2N_m\bar{y}_m^2 +N_m\bar{y}_m^2 + 2N_m^{(l)}[\bar{y}_m^{(l)}]^2 + 2N_m^{(r)}[\bar{y}_m^{(r)}]^2  -N_m^{(l)}[\bar{y}_m^{(l)}]^2 -N_m^{(r)}[\bar{y}_m^{(r)}]^2\Bigg\}
+\end{split}
+\end{equation}
+
+Cancel the like terms. 
+
+\begin {equation}
+\begin{split}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \Bigg\{-N_m[\bar{y}_m]^2 + N_m^{(l)}[\bar{y}_m^{(l)}]^2 +N_m^{(r)}[\bar{y}_m^{(r)}]^2\Bigg\}
+\end{split}
+\end{equation}
+
+We next use the fact that $N_m\bar{y}_m = N_m^{(l)}\bar{y}_m^{(l)} + N_m^{(r)}\bar{y}_m^{(r)}$ proven below.
+
+$$ \sum_{\underline{X}_i \in R_m} y_i = \sum_{\underline{X}_i \in R_m^{(l)}}y_i + \sum_{\underline{X}_i \in R_m^{(r)}} y_i \Rightarrow N_m \frac{1}{N_m} \sum_{\underline{X}_i \in R_m}y_i = N_m^{(l)}\frac{1}{N_m^{(l)}} \sum_{\underline{X}_i \in R_m^{(l)}}y_i + N_m^{(r)}\frac{1}{N_m^{(r)}}\sum_{X_i \in R_m^{(r)}}y_i $$
+
+\begin {equation}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \Bigg\{ -N_m ( \frac{N_m^{(l)}\bar{y}_m^{(l)} + N_m^{(r)}\bar{y}_m^{(r)}}{N_m})^2 + N_m^{(l)}[\bar{y}_m^{(l)}]^2 + N_m^{(r)}[\bar{y}_m^{(r)}]^2\Bigg\}
+\end{equation}
+
+Make a common denominator and use $N_m = N_m^{(l)} + N_m^{(r)}$.
+
+\begin {equation}
+\begin{split}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \Bigg\{\frac{-[N_m^{(l)}\bar{y}_m^{(l)}]^2 - [N_m^{(r)}\bar{y}_m^{(r)}]^2-2N_m^{(l)}\bar{y}_m^{(l)}N_m^{(r)}\bar{y}_m^{(r)}}{N_m}\\ + \frac{(N_m^{(l)}+ N_m^{(r)})N_m^{(l)}[\bar{y}_m^{(l)}]^2 + (N_m^{(l)}+N_m^{(r)})N_m^{(r)}[\bar{y}_m^{(r)}]^2}{N_m}\Bigg\}
+\end{split}
+\end{equation}
+
+Cancel the like terms and pull out a common factor in all terms. 
+
+\begin{equation}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \Bigg\{\frac{N_m^{(l)}N_m^{(r)}}{N_m}\Big([\bar{y}_m^{(l)}]^2-2\bar{y}_m^{(l)}\bar{y}_m^{(r)} + [\bar{y}_m^{(r)}]^2\Big)\Bigg \}
+\end{equation}
+
+\begin{equation}
+m^* = \underset{1 \leq m \leq M}{\operatorname{argmax}} \Bigg\{\frac{N_m^{(l)}N_m^{(r)}}{N_m}\Big(\bar{y}_m^{(l)} - \bar{y}_m^{(r)}\Big)^2\Bigg \}
+\end{equation}
+
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 11------------------------------------
+%-------------------------------------------------------------------------------
+\newpage
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 11}
+\setlength{\parindent}{0pt}
+
+The goal is to derive an updating formula for calculating the change in 
+improvement  in prediction risk as a result of a split when the split is 
+modified by one observation changing sides. 
+
+In problem 10 we showed that the improvement in prediction risk as a result of 
+a split is 
+
+$$ \frac{n_ln_r}{n}\big(\bar{y}_l - \bar{y}_r\big)^2$$
+
+Assume the convention that an observation moving from the left to right 
+daughter is positive and label the observation as $(\underline{x}_k, y_k)$
+
+\begin{equation}
+n_l \rightarrow n_l - 1
+\end{equation}
+
+\begin{equation}
+n_r \rightarrow n_r + 1
+\end{equation}
+
+\begin{equation}
+\bar{y}_l = \frac{1}{n_l}\sum_{\underline{x}_i \in R_m^{(l)}}y_i
+\end{equation}
+
+\begin{equation}
+\bar{y}_r = \frac{1}{n_r}\sum_{\underline{x}_i \in R_m^{(r)}}y_i
+\end{equation}
+
+\begin{equation}
+\sum_{ \underline{x}_i \in R_m^{(l)}} y_i \rightarrow \bigg( \sum_{ \underline{x}_i \in R_m^{(l)}}y_i \bigg) - y_k
+\end{equation}
+
+\begin{equation}
+\sum_{ \underline{x}_i \in R_m^{(r)}} y_i \rightarrow \bigg( \sum_{ \underline{x}_i \in R_m^{(r)}}y_i \bigg) - y_k
+\end{equation}
+
+$$(1), (3), (5) \Rightarrow \bar{y}_l = \frac{1}{n_l}\sum_{\underline{x}_i \in R_m^{(l)}}y_i \rightarrow \frac{1}{n_l-1}\Bigg[\bigg(\sum_{\underline{x}_i \in R_m^{(l)}}y_i\bigg)-y_k\Bigg] = \frac{n_l}{n_l-1}\Bigg[\bigg(\frac{1}{n_l}\sum_{\underline{x}_i \in R_m^{(l)}}y_i\bigg) - \frac{y_k}{n_l}\Bigg]$$
+
+\begin{equation}
+\bar{y}_l \rightarrow \frac{n_l}{n_l-1}\bar{y}_l - \frac{y_k}{n_l-1}
+\end{equation}
+
+$$(2), (4), (6) \Rightarrow \bar{y}_r = \frac{1}{n_r}\sum_{\underline{x}_i \in R_m^{(r)}}y_i \rightarrow \frac{1}{n_r+1}\Bigg[\bigg(\sum_{\underline{x}_i \in R_m^{(r)}}y_i\bigg)+y_k\Bigg] = \frac{n_r}{n_r+1}\Bigg[\bigg(\frac{1}{n_r}\sum_{\underline{x}_i \in R_m^{(r)}}y_i\bigg) + \frac{y_k}{n_r}\Bigg]$$
+
+\begin{equation}
+\bar{y}_r \rightarrow \frac{n_r}{n_r+1}\bar{y}_r - \frac{y_k}{n_r+1}
+\end{equation}
+
+Below is the improvement in making a split as a function of the original 
+variables, with one point moved from the left daughter region to the right 
+daughter region. 
+
+$$(1), (2), (7), (8) \Rightarrow \frac{n_ln_r}{n} \big(\bar{y}_l - \bar{y}_r\big)^2 \rightarrow \frac{(n_l-1)(n_r+1)}{n}\bigg(\frac{n_l}{n_l+1}\bar{y}_l - \frac{y_k}{n_l-1} - \frac{n_r}{n_r+1}\bar{y}_r - \frac{y_k}{n_r + 1}\bigg)^2$$
+
+Below is the improvement as one point is moved from the left daughter region to 
+the right daughter region. 
+
+$$\frac{n_ln_r}{n} \big(\bar{y}_l - \bar{y}_r\big)^2 - \frac{(n_l-1)(n_r+1)}{n}\bigg(\frac{n_l}{n_l+1}\bar{y}_l - \frac{y_k}{n_l-1} - \frac{n_r}{n_r+1}\bar{y}_r - \frac{y_k}{n_r + 1}\bigg)^2$$
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 12------------------------------------
+%-------------------------------------------------------------------------------
+\newpage
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 12}
+
+\vspace{5 mm}
+\noindent
+{\bf Treat Node as Terminal:} Treating the node as terminal means we predict on 
+the majority at the node with the missing value. The following are reasons and 
+situations when this strategy is ok:
+
+\begin{itemize}
+\item Surrogate might be a bad predictor. Weak correlation might split 
+erroneously.
+\item If you start with homogeneous data (i.e. you have roughly the same amount 
+of different types of responses) and you are far enough down the tree to have a 
+fairly pure node, it might be better to just predict at the node rather than 
+guessing which direction to go. Predicting at the node will reduce the 
+compounded variance of prediction observed by sending your observation further 
+down the tree.
+\end{itemize}
+
+\vspace{2 mm}
+\noindent
+The following are reasons and situations where treating the node as terminal 
+might perform worse than using a surrogate variable:
+
+\begin{itemize}
+\item If you have lopsided training data (that is you have far more 
+observations of one type of response) you run the risk of always 
+predicting for the response that has the most data, even when you are further 
+down the tree near the terminal nodes.
+\item It may perform poorly if you need to predict near the root of the tree. 
+If we haven't sufficiently parsed out the data in to relatively pure nodes, 
+such as near the root, we will predict essentially on what training data we 
+have the most of. For example, if you could imagine having to predict on the 
+root we would essentially predict which response we collected the most of.
+\item If we actually have a highly correlated surrogate, then we miss out on 
+possible future benefits of future splitting.
+\end{itemize}
+
+\vspace{2 mm}
+\noindent
+{\bf Split by Majority:} This approach assumes that an observation is most 
+likely to go the direction where most of the training data goes. This method 
+performs well when:
+
+\begin{itemize}
+\item Surrogate might be a bad predictor. Weak correlation might split 
+erroneously.
+\item If you have homogeneous data and splits are lopsided (that is, the 
+majority of one type of data is going one way by a wide margin), then it is 
+somewhat reasonable to assume that you would observe that observation to also 
+go in that direction.
+\end{itemize}
+
+\vspace{2 mm}
+\noindent
+The following are reasons why splitting by majority of where the training data 
+goes might perform poorly when compared to the surrogate method:
+
+\begin{itemize}
+\item Splits between two child nodes contain nearly half of the data from the 
+parent. This would make for an unstable model, because assuming you would 
+sample the same in another experiment, you could realize a different majority, 
+thus sending your observation down the other side.
+\item Again, if you have lop-sided training data, you may expect that the 
+majority of the training data will always flow in favor of the response that 
+makes up the majority of your training data.
+\end{itemize}
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 13------------------------------------
+%-------------------------------------------------------------------------------
+\newpage
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 1, Due 4/28/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 13}
+
+\vspace{5 mm}
+\noindent
+Due to its structure, this model has an advantage over surrogate splitting in 
+cases where non-response carries some sort of information.  i.e. If the primary 
+split is on the Q: What is your income? In this case respondents may be 
+uncomfortable answering if they are shy, so a missing value could indicate 
+shyness.  This is a very elementary example, but because the model accounts for 
+missing values and treats them as a variable response, effects like these will 
+be accounted for.  
+
+\vspace{5 mm}
+\noindent
+On the other hand, when the missing values are purely random, you would have 
+additional non-optimal splits competing unnecessarily which will result in less 
+data further down the tree.  This will result in watered down data which will 
+run out more quickly, and is unnecessary when the additional splits are not 
+improving the model prediction.  This strategy does allow for a surrogate 
+effect, as if you are splitting on a predictor $Y$ and predictor say  $Z$ is 
+highly correlated to $Y$, then the data that had missing values for $Y$ will 
+most likely be next split on $Z$.  This can be thought of as a surrogate effect.  
+This method cannot be used in cases where there is no missing data, as it will 
+not create any missing value splits in the resulting model.  We can work around 
+this by removing a certain percentage of the dataset at random, or 
+bootstrapping our dataset and removing data from the bootstrapped points, 
+including those in our original dataset.
 
 \end{document}
