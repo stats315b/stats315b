@@ -1,5 +1,5 @@
 ---
-title: "Probelem 1 - Data Mining Marketing"
+title: "Problem 1 - Data Mining Marketing"
 author: "Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas"
 date: "April 26, 2016"
 output: pdf_document
@@ -157,7 +157,7 @@ pruned_fit <- prune(tree = fit, cp = opt_cp)
 plotcp(pruned_fit)
 ```
 
-This Tree is still too big. The problem states to get a tree at most as big as 
+This tree is still too big. The problem states to get a tree at most as big as 
 10 nodes, we will need to prune this tree until we have less than 10 terminal 
 nodes.
 
@@ -171,7 +171,7 @@ plotcp(pruned_fit)
 
 This will be our final tree. In order to get the training error the root node 
 error is multiplied times the relative error. In order to get the test error 
-the root node error is multiplied times the xerror. 
+the root node error is multiplied times the error. 
 
 ```{r}
 # Retrieve cross-validation error.
@@ -215,7 +215,7 @@ For the first branch, we start with our root node that splits on occupation. We
 notice that a prediction is made from the root node on occupations 6 and 9 
 (unemployed and student). They are predicted to be in the lowest income 
 bracket (less than $10,000), which is to be expected since the unemployed do 
-not have a jab to make money with and students are not expected to be working. 
+not have a job to make money with and students are not expected to be working. 
 For all other occupations, we then split on householder status. Those who own 
 their own house are separated from those who rent or live with parents. Those 
 who own their own home are predicted to be in the second highest income bracket 
@@ -229,7 +229,7 @@ $39,999 income bracket. Managers who are married or living with someone are in
 the $50,000 and $74,999 bracket. Non-managers who are not married are in the 
 $20,000 and $24,999 bracket.
 
-The marriatal status split is interesting, because it may illuminate how the 
+The marital status split is interesting, because it may illuminate how the 
 data was collected. It seems that those married or living with someone make 
 more money than their non-married counterparts. It is quite possible that 
 income reported is household income, and thus we are observing a double income 
