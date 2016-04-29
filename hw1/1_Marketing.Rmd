@@ -1,5 +1,5 @@
 ---
-title: "Probelem 1 - Data Mining Marketing"
+title: "Problem 1 - Data Mining Marketing"
 author: "Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas"
 date: "April 26, 2016"
 output: pdf_document
@@ -229,7 +229,7 @@ $39,999 income bracket. Managers who are married or living with someone are in
 the $50,000 and $74,999 bracket. Non-managers who are not married are in the 
 $20,000 and $24,999 bracket.
 
-The marriatal status split is interesting, because it may illuminate how the 
+The marital status split is interesting, because it may illuminate how the 
 data was collected. It seems that those married or living with someone make 
 more money than their non-married counterparts. It is quite possible that 
 income reported is household income, and thus we are observing a double income 
