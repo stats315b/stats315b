@@ -46,6 +46,12 @@ not always an accurate function for prediction. It could be that there is very
 little signal between the predictors and the response. That is, there is very 
 low signal to noise.
 
+\vspace{5 mm}
+\noindent
+This could arise when your predictors do not do well at predicting your 
+response. This could arise over time as well when your problem exhibits 
+concept drift.
+
 %-------------------------------------------------------------------------------
 %---------------------------------Problem 4-------------------------------------
 %-------------------------------------------------------------------------------
@@ -297,7 +303,7 @@ c_{m}\sum\limits_{i=1}^N (I(x_{i} \in R_{m}) = 0$
 \vspace{3 mm}
 \noindent
 So simplifying, 
-${c}_{m} = \frac{\sum\limits_{i=0}^N (y_{i} I(x_{i} \in R_{m}))}
+${c}_{m} = \frac{\sum\limits_{i=1}^N (y_{i} I(x_{i} \in R_{m}))}
 {\sum\limits_{i=1}^N (I(x_{i} \in R_{m}))}$ 
 as desired.
 
