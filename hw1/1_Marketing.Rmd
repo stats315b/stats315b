@@ -157,7 +157,7 @@ pruned_fit <- prune(tree = fit, cp = opt_cp)
 plotcp(pruned_fit)
 ```
 
-This Tree is still too big. The problem states to get a tree at most as big as 
+This tree is still too big. The problem states to get a tree at most as big as 
 10 nodes, we will need to prune this tree until we have less than 10 terminal 
 nodes.
 
@@ -171,7 +171,7 @@ plotcp(pruned_fit)
 
 This will be our final tree. In order to get the training error the root node 
 error is multiplied times the relative error. In order to get the test error 
-the root node error is multiplied times the xerror. 
+the root node error is multiplied times the error. 
 
 ```{r}
 # Retrieve cross-validation error.
@@ -215,7 +215,7 @@ For the first branch, we start with our root node that splits on occupation. We
 notice that a prediction is made from the root node on occupations 6 and 9 
 (unemployed and student). They are predicted to be in the lowest income 
 bracket (less than $10,000), which is to be expected since the unemployed do 
-not have a jab to make money with and students are not expected to be working. 
+not have a job to make money with and students are not expected to be working. 
 For all other occupations, we then split on householder status. Those who own 
 their own house are separated from those who rent or live with parents. Those 
 who own their own home are predicted to be in the second highest income bracket 
