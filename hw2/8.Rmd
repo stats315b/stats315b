@@ -1,0 +1,151 @@
+---
+title: "Probelem 6 - Binary Classification: Spam Email"
+author: "Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas"
+date: "May 22, 2016"
+output: pdf_document
+---
+
+## Libraries
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(gbm)
+```
+
+## File Parameters
+
+```{r}
+# Session -> set working directory -> Source file location
+
+# Path for data
+data_path <- "data/"
+file <- "Income_Data.txt"
+ext <- paste(data_path, file, sep = "")
+```
+
+## Read in Data
+
+The data does not have any column headers, so we have to manually assign the 
+column names. Our variables are also all categorical variables, some with an 
+order relationship and some with out. We also have to import these values as 
+factors, specifying if they have an order relationship or not. The following 
+variables have an order relationship:
+
+* Income
+* Age
+* Education
+* Amount of time living in the bay area
+* Household count
+* Minors in household count
+
+The remaining variables do not have an order relationship:
+
+* Sex
+* Marital status
+* Occupation
+* Dual income status
+* Whether you rent or own a house
+* Type of house you live in
+* Ethnicity
+* Languages
+
+```{r, cache=TRUE}
+# Name of the variables imported
+var_names = c("income",
+              "sex",
+              "marital_status",
+              "age",
+              "education",
+              "occupation",
+              "bay_duration",
+              "dual_income",
+              "household_total",
+              "household_minors",
+              "householder_status",
+              "home_type",
+              "ethnicity",
+              "language")
+
+# Type of the variable being imported
+var_type <- cols(col_factor(sprintf("%i", 1:9), ordered =  TRUE), # income
+                 col_factor(sprintf("%i", 1:2), ordered = FALSE), # sex
+                 col_factor(sprintf("%i", 1:5), ordered = FALSE), # marital stat
+                 col_factor(sprintf("%i", 1:7), ordered =  TRUE), # age
+                 col_factor(sprintf("%i", 1:6), ordered =  TRUE), # education
+                 col_factor(sprintf("%i", 1:9), ordered = FALSE), # occupation
+                 col_factor(sprintf("%i", 1:5), ordered =  TRUE), # bay duration
+                 col_factor(sprintf("%i", 1:3), ordered = FALSE), # dual income
+                 col_factor(sprintf("%i", 1:9), ordered =  TRUE), # house count
+                 col_factor(sprintf("%i", 0:9), ordered =  TRUE), # minor count
+                 col_factor(sprintf("%i", 1:3), ordered = FALSE), # rent/own
+                 col_factor(sprintf("%i", 1:5), ordered = FALSE), # house type
+                 col_factor(sprintf("%i", 1:8), ordered = FALSE), # ethnicity
+                 col_factor(sprintf("%i", 1:3), ordered = FALSE)) # language
+
+df <- read_csv(file = ext, 
+               col_names = var_names, 
+               col_types = var_type)
+```
+
+## Randomize the Dat
+
+To use GBM's test/train functionality, we will randomize the data first. We do 
+this because GBM will take the first x% specified as training data and the 
+remaining as testing data. We want to ensure that the data is properly shuffled 
+first to mimic random sampling across our data.
+
+```{r}
+# Randomize the data
+n <- dim(df)[1]
+df <- df[sample(n),]
+
+# Split 80% training and 20% test
+train_n <- round(0.8 * n, 0)
+test_n <- n - train_n
+train <- df[train_n,]
+test <- df[test_n,]
+```
+
+## Fitting the GBM
+
+We now fit our first model. We will make our first model the same as that in 
+the tutorial.
+
+```{r}
+gbm0 <- gbm(income~., 
+            data = df, 
+            train.fraction = 1.0, 
+            interaction.depth = 1, 
+            shrinkage = .05, 
+            n.trees = 2500, 
+            bag.fraction = 0.5, 
+            cv.folds = 5, 
+            distribution = "multinomial", 
+            verbose = TRUE)
+
+gbm.perf(object = gbm0, method = "cv")
+bestIter_test <- gbm.perf(object = gbm0, method = "cv")
+summary(gbm0)
+```
+
+We use 5 fold cross validation to pick our best number of trees. We will then 
+use this amount (`bestIter_test`) to predict on our holdout testing data.
+
+```{r}
+
+```
+
+
+With a direct copy from the tutorial and using a training/testing method for 
+selecting the correct number of iterations, we pick to use `bestIter_test` as 
+our optimal number of iterations.
+
+
+Things to test:
+
+* Shrinkage
+* bag.fraction
+* interaction.depth
+* shrinkage
