@@ -1,0 +1,129 @@
+---
+title: "Problem 6 - Binary Classification: Spam Email"
+author: "Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas"
+date: "May 22, 2016"
+output: pdf_document
+---
+
+## Libraries
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(gbm)
+```
+
+## File Parameters
+
+```{r}
+# Session -> set working directory -> Source file location
+
+set.seed(131)
+
+# Path for data
+data_path <- "data/"
+file_tst <- "Spam.Test.txt"
+file_trn <- "Spam_Train.txt"
+file_tst <- paste(data_path, file_tst, sep = "")
+file_trn <- paste(data_path, file_trn, sep = "")
+```
+
+## Read in Data
+
+```{r}
+tst <- read_csv(file = file_tst, col_names = FALSE)
+trn <- read_csv(file = file_trn, col_names = FALSE)
+```
+
+Here we require both the testing and training spam datasets from the course website, stored as comma separated values.
+
+To aid in interpretability later we will correct the column names now.
+
+```{r}
+cnms <- c("make", "address", "all", "3d", "our", "over", "remove", "internet","order", "mail", "receive", "will", "people", "report", "addresses","free", "business", "email", "you", "credit", "your", "font","000","money", "hp", "hpl", "george", "650", "lab", "labs", "telnet", "857", "data", "415", "85", "technology", "1999", "parts","pm", "direct", "cs", "meeting", "original", "project", "re","edu", "table", "conference", ";", "(", "[", "!", "$", "#", "CAPAVE", "CAPMAX", "CAPTOT","type") 
+
+colnames(tst) <- cnms
+colnames(trn) <- cnms
+
+```
+
+
+## Part (a)
+
+Here we will fit a gbm model on the training data and check its misclassification on the testing dataset.
+
+```{r}
+
+gbm0 <- gbm(type ~ . , data = trn, train.fraction = 1, interaction.depth=4, shrinkage=.05,  n.trees=2500, bag.fraction=0.5, cv.folds=5, distribution="bernoulli", verbose=T)
+
+gbm0.pred <- predict(gbm0, tst, type="response", n.trees=300)
+df <- cbind(as.data.frame(gbm0.pred), tst$type)
+df <- df %>% mutate(pred = ifelse(gbm0.pred >= .5, 1, 0), equ = pred == tst$type)
+gbm0.tst.mc <- (1534 - sum(df$equ))/1534
+gbm0.tst.mc
+
+df_spam <- df %>% filter(tst$type == 1)
+gbm0.spam.mc <- (618 - sum(df_spam$equ))/618
+gbm0.spam.mc
+
+df_not <- df %>% filter(tst$type == 0)
+gbm0.not.mc <- (916 - sum(df_not$equ))/916
+gbm0.not.mc
+```
+
+Here we can see our overall estimate of misclassification rate is .0391.  Our misclassification percentage for spam in the testing set is 5.18% and for not spam is 3.06%
+
+
+## Part (B)
+
+Now we will set up a function to let us quickly edit our cost parameter and find our misclassification rates.
+
+```{r}
+
+cost <- function(cst) {
+df <- cbind(as.data.frame(gbm0.pred), tst$type)
+df <- df %>% mutate(pred = ifelse(gbm0.pred >= cst, 1, 0), equ = pred == tst$type)
+gbm0.tst.mc <- (1534 - sum(df$equ))/1534
+gbm0.tst.mc
+
+df_spam <- df %>% filter(tst$type == 1)
+gbm0.spam.mc <- (618 - sum(df_spam$equ))/618
+gbm0.spam.mc
+
+df_not <- df %>% filter(tst$type == 0)
+gbm0.not.mc <- (916 - sum(df_not$equ))/916
+gbm0.not.mc
+
+return(c(gbm0.tst.mc, gbm0.spam.mc, gbm0.not.mc))
+}
+
+cost(.5)
+cost(.6)
+cost(.8)
+cost(.955)
+
+```
+
+Now we see that with a very high relative cost we can reach the desired non-spam misclassification rate, but our overall misclassification rate has risen to .1545.  Our misclassification percentage for spam in the testing set is now 38.02% and for not spam is .22%
+
+```{r}
+
+summary(gbm0,main="RELATIVE INFLUENCE OF ALL PREDICTORS")
+best.iter<-gbm.perf(gbm0,method="OOB")#Best iteration by OOB 
+#plot(x=gbm0,i.var=58,n.trees=best.iter, main="Partial Dependence of 'type' ") 
+
+
+```
+
+
+
+ 
+
+
+
+
+
+
+
+
