@@ -36,12 +36,30 @@
 \section*{Problem 3}
 
 \begin{gather*}
-\frac{\partial R}{\partial a_{k}} = 
-\frac{1}{N} \sum_{j = 1}^{n} \frac{\partial L}{\partial a_{k}}\\
+\text{Let } L(y_{i}, a_{0} + \sum_{j = 1}^{n} a_{j}x_{ij}) = L 
+\text{ and } a_{0} + \sum_{j = 1}^{n} a_{j}x_{ij} = f(x, a) = f\\
+\frac{\partial \hat{R}}{\partial a_{k}} = 
+\frac{1}{N} \sum_{j = 1}^{N} \frac{\partial L}{\partial a_{k}}\\
 \text{By the chain rule: } 
 \frac{\partial L}{\partial a_{k}} = 
-
-
+\frac{\partial L(y_{i}, f(x, a))}{\partial a_{k}} = 
+\frac{\partial L(y_{i}, f(x, a))}{f(x, a)} 
+\frac{\partial f(x, a)}{\partial a_{k}} = 
+\frac{\partial L}{\partial f} \frac{\partial f}{\partial a_{k}}\\
+\frac{\partial f}{\partial a_{k}} = 
+\text{Now consider } 
+\frac{\partial}{\partial a_{k}} [a_{0} + \sum_{j = 1}^{n} a_{j}x_{ij}]\\
+\text{Note that } a_{k} 
+\text{ only appears in the sumation and is multiplied by } x_{ik}\\
+\text{So all values in } f 
+\text{ will evaluate to zero except } a_{k}x_{ik}\\
+\text{Then } 
+\frac{\partial}{\partial a_{k}} [a_{0} + \sum_{j = 1}^{n} a_{j}x_{ij}] = x_{ik}\\
+\text{And } 
+\frac{1}{N} \sum_{j = 1}^{N} \frac{\partial L}{\partial a_{k}} = 
+\frac{1}{N} \sum_{j = 1}^{N} \frac{\partial L}{\partial f} 
+\frac{\partial f}{\partial a_{k}} = 
+\frac{1}{N} \sum_{j = 1}^{N} \frac{\partial L}{\partial f} x_{ik}
 \end{gather*}
 
 \end{document}
