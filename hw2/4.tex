@@ -1,0 +1,84 @@
+\documentclass[11pt]{article}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{enumerate}
+\usepackage{mdframed}
+
+
+\begin{document}
+\begin{center}
+%---------------------------------------------------------------------------------------
+%---------------------------------Header------------------------------------------------
+%---------------------------------------------------------------------------------------
+
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 2, Due 5/22/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+%-------------------------------------------------------------------------------
+%---------------------------------Answer----------------------------------------
+%-------------------------------------------------------------------------------
+
+\section*{Problem 4}
+
+Assume $E[x_j] = 0$ and $E[x_j^2] = 1$ for all x.
+
+We want to show that the variable, $x_j^*$ that has the maximum absolute correlation with y 
+
+\begin{equation}
+j^* = \underset{1 \leq j \leq J}{\operatorname{argmax}}\hspace{1mm}|E(y \cdot x)|
+\end{equation}
+
+is the same as the one that best predicts y using squared error loss
+
+\begin{equation}
+j^* = \underset{1 \leq j \leq J}{\operatorname{argmin}} \hspace{1mm} \underset{\rho}{\operatorname{min}} \hspace{1mm} E[y - \rho x_j]^2
+\end{equation}
+
+We begin by expanding equation 2. 
+
+$$j^* = \underset{1 \leq j \leq J}{\operatorname{argmin}} \hspace{1mm} \underset{\rho}{\operatorname{min}} \hspace{1mm} E[(y - \rho x_j)^T ( y- \rho x_j)]$$ 
+
+$$j^* = \underset{1 \leq j \leq J}{\operatorname{argmin}} \hspace{1mm} \underset{\rho}{\operatorname{min}} \hspace{1mm} E[y^Ty + \rho^2 x_j^T x_j - \rho x_j^T y - \rho y^T x_j]$$ 
+
+Distributing the expectation as well as using our second assumption leaves us with
+
+$$j^* = \underset{1 \leq j \leq J}{\operatorname{argmin}} \hspace{1mm} \underset{\rho}{\operatorname{min}} \hspace{1mm} [E(y^2) + \rho^2 + -2 \rho E(y \cdot x_j)]$$
+
+Since y and $\rho$ are real $\Rightarrow$ $E(y^2) \geq 0$ and $\rho^2 \geq 0$ 
+
+define $A = E(y^2) + \rho^2 \geq 0$
+
+$$J^* = \underset{1 \leq j \leq J}{\operatorname{argmin}} \hspace{1mm} \underset{\rho}{\operatorname{min}} \hspace{1mm} [A - 2 \rho E(y \cdot x_j)]$$
+
+First we want to minimize with respect to $\rho$ to get $\rho^*$
+
+$$\frac{\partial}{\partial \rho} \bigg[ E(y^2) + \rho^2 - 2 \rho E(y \cdot x_j) \bigg] = 2 \rho - 2 E(y \cdot x_j) \Rightarrow \rho^* = E(y \cdot x_j) \Rightarrow sign(\rho^*) = sign(E(y \cdot x_j))$$ 
+
+if $E(y \cdot x_j) < 0$ want to minimize $\rho^* |E(y \cdot x_j)|$ or minimize $- |\rho^*| |E(y \cdot x_j)|$
+
+if $E(y \cdot x_j) > 0$ want to maximize $\rho^* |E(y \cdot x_j)|$ or maximize $ |\rho^*| |E(y \cdot x_j)|$
+
+Therefore in either case we want to maximize $|E(y \cdot x_j)|$
+
+$$ \Rightarrow j^* = \underset{1 \leq j \leq J}{\operatorname{argmax}}\hspace{1mm} |E(y \cdot x_j)|$$
+
+
+
+
+
+\end{document}
