@@ -35,6 +35,12 @@
 
 \section*{Problem 3}
 
+\noindent
+For convex empirical risk and convex penalities, the solution of 
+$\hat{a}(\lambda)$ will be unique since it is a sum of convex functions. We 
+will now attempt to minimize the sume of the empircal risk and the penalty. 
+First, we consider minimizing the empirical risk:
+
 \begin{gather*}
 \text{Let } L(y_{i}, a_{0} + \sum_{j = 1}^{n} a_{j}x_{ij}) = L 
 \text{ and } a_{0} + \sum_{j = 1}^{n} a_{j}x_{ij} = f(x, a) = f\\
@@ -46,8 +52,8 @@
 \frac{\partial L(y_{i}, f(x, a))}{f(x, a)} 
 \frac{\partial f(x, a)}{\partial a_{k}} = 
 \frac{\partial L}{\partial f} \frac{\partial f}{\partial a_{k}}\\
-\frac{\partial f}{\partial a_{k}} = 
 \text{Now consider } 
+\frac{\partial f}{\partial a_{k}} = 
 \frac{\partial}{\partial a_{k}} [a_{0} + \sum_{j = 1}^{n} a_{j}x_{ij}]\\
 \text{Note that } a_{k} 
 \text{ only appears in the sumation and is multiplied by } x_{ik}\\
@@ -56,10 +62,41 @@
 \text{Then } 
 \frac{\partial}{\partial a_{k}} [a_{0} + \sum_{j = 1}^{n} a_{j}x_{ij}] = x_{ik}\\
 \text{And } 
-\frac{1}{N} \sum_{j = 1}^{N} \frac{\partial L}{\partial a_{k}} = 
-\frac{1}{N} \sum_{j = 1}^{N} \frac{\partial L}{\partial f} 
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial a_{k}} = 
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} 
 \frac{\partial f}{\partial a_{k}} = 
-\frac{1}{N} \sum_{j = 1}^{N} \frac{\partial L}{\partial f} x_{ik}
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik}
 \end{gather*}
+
+\vspace{5mm}
+\noindent
+Now we consider the penalty function. Let's assume that $a_{k} > 0$, then:
+
+\begin{gather*}
+\frac{\partial P_{\gamma} (a)}{\partial a_{k}} = 
+\frac{\partial}{\partial a_{k}} \sum_{j = 1}^{n} a_{j}^{\gamma}\\
+\text{Note, the only value in this sum that depends on } a_{k} 
+\text{ is } a_{k}^{\gamma}\\
+\text{So, } \frac{\partial}{\partial a_{k}} \sum_{j = 1}^{n} a_{j}^{\gamma} = 
+\frac{\partial}{\partial a_{k}} a_{k}^{\gamma} = 
+\gamma a_{k}^{\gamma - 1}
+\end{gather*}
+
+\vspace{5mm}
+\noindent
+Then, together we have:
+
+\begin{gather*}
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
+\gamma a_{k}^{\gamma - 1} = 0
+\end{gather*}
+
+\vspace{5mm}
+\noindent
+How do we solve this? The partial of L with respect to f is going to depend on 
+the a's too, so we can't solve this directly. Is there a property of convex 
+functions that we don't know about that we could use? Similar things will 
+happen with the elastic net. Are we to prove this for least squares and not 
+general convex?
 
 \end{document}
