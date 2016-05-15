@@ -1,0 +1,56 @@
+\documentclass[11pt]{article}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{enumerate}
+\usepackage{mdframed}
+\usepackage{mathrsfs}
+
+
+\begin{document}
+\begin{center}
+%---------------------------------------------------------------------------------------
+%---------------------------------Header------------------------------------------------
+%---------------------------------------------------------------------------------------
+
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 2, Due 5/22/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 1}
+
+\vspace{5 mm}
+\noindent
+The advantage of random variable selection strategy is that we reduce the
+possibility of generating highly correlated bagged trees which in turn 
+decreases the chances of overfitting the model on the training data. This
+strategy works best if the learning method is inherently unstable.
+
+One disadvantage of using the random variable selection strategy would be 
+in the case when the feature matrix is small and has a few noisy predictors
+Here, the split could be made on an irrelevant predictor in some bagged trees.
+Also, when the learning method/target function is stable, the random subset
+selection strategy will lead to bad predictions
+
+Alternate startegy to random variable subset selection: Switch the root nodes,
+Fix the tree depth?
+
+
+\vspace{5 mm}
+\noindent
+
+
+\end{document}
