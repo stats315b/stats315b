@@ -12,6 +12,7 @@ library(ggplot2)
 library(dplyr)
 library(readr)
 library(gbm)
+library(purrr)
 ```
 
 ## File Parameters
@@ -104,8 +105,9 @@ df <- df[sample(n),]
 # Split 80% training and 20% test
 train_n <- round(0.8 * n, 0)
 test_n <- n - train_n
-train <- df[train_n,]
-test <- df[test_n,]
+train <- df[0:train_n,]
+test_x <- df[(train_n + 1):n, 2:14]
+test_y <- df[(train_n + 1):n, 1]
 ```
 
 ## Fitting the GBM
@@ -114,28 +116,57 @@ We now fit our first model. We will make our first model the same as that in
 the tutorial.
 
 ```{r}
-gbm0 <- gbm(income~., 
-            data = df, 
-            train.fraction = 1.0, 
-            interaction.depth = 1, 
-            shrinkage = .05, 
-            n.trees = 2500, 
-            bag.fraction = 0.5, 
-            cv.folds = 5, 
-            distribution = "multinomial", 
-            verbose = TRUE)
+fit <- gbm(income~., 
+           data = df, 
+           train.fraction = 1.0, 
+           interaction.depth = 1, 
+           shrinkage = .05, 
+           n.trees = 2500, 
+           bag.fraction = 0.5, 
+           cv.folds = 5, 
+           distribution = "multinomial", 
+           verbose = TRUE)
 
-gbm.perf(object = gbm0, method = "cv")
-bestIter_test <- gbm.perf(object = gbm0, method = "cv")
-summary(gbm0)
+gbm.perf(object = fit, method = "cv")
+bestIter_test <- gbm.perf(object = fit, method = "cv")
+summary(fit)
 ```
 
 We use 5 fold cross validation to pick our best number of trees. We will then 
 use this amount (`bestIter_test`) to predict on our holdout testing data.
 
-```{r}
+## Determine Misclassification Rate on Test
 
+We now apply the predictions to our test data and generate the 
+misclassification error.
+
+```{r}
+# Determine Predictions
+pred <- predict(fit, test_x, bestIter_test)
+pred_mat <- matrix(0, nrow = dim(test_x)[1], ncol = 1)
+for (i in seq(1, dim(test_x)[1], 1)) {
+  beg <- (i - 1) * 9 + 1
+  end <- i * 9
+  k <- which.max(pred[beg:end])
+  pred_mat[i, 1] <- k
+}
+
+# Compare misclassifcations to test data
+test_y <- as.matrix(test_y)
+test_y <- as.matrix(map(test_y, as.integer))
+
+count_miss <- 0
+for (i in seq_len(length(test_y))) {
+  if (test_y[i] != pred_mat[i, 1]) {
+    count_miss <- count_miss + 1
+  }
+}
+
+
+
+test_y - pred_mat
 ```
+
 
 
 With a direct copy from the tutorial and using a training/testing method for 
