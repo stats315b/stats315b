@@ -1,0 +1,70 @@
+---
+title: "Problem 7 - Regression: California Housing"
+author: "Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas"
+date: "May 22, 2016"
+output: pdf_document
+---
+
+## Libraries
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(gbm)
+```
+
+## File Parameters
+
+```{r}
+# Session -> set working directory -> Source file location
+
+set.seed(131)
+
+# Path for data
+data_path <- "data/"
+data_name <- "California_Data.txt"
+data_name <- paste(data_path, data_name, sep = "")
+
+```
+
+## Read in Data
+
+```{r}
+data_0 <- read_csv(file = data_name, col_names = FALSE)
+
+
+# Name data columns
+column_names <- c("House_Value", "Median_Income", "Housing_Median_Age",
+                  "Average_Rooms", "Average_Bedrooms", "Population",
+                  "Average_Occupancy", "Lattitude", "Longitude")
+colnames(data_0) <- column_names
+
+# Make sure the samples are mixed
+set.seed(131)
+data <- data_0[sample(nrow(data_0)),]
+```
+
+## Part (a)
+
+We fit our data using a gbm model and determine the prediction accuracy. 
+
+```{r}
+# Fit model on our data
+set.seed(444) # Random for bag.fraction
+gbm_model <- gbm(House_Value ~ ., data = data , train.fraction = 0.8, interaction.depth = 4,
+                shrinkage = 0.05, n.trees = 10000, bag.fraction = 0.5, cv.folds = 5,
+                distribution = "gaussian", verbose = T)
+
+# Determine the optimal number of trees by cross validation 
+best.iter <- gbm.perf(gbm_model, method = "cv")
+```
+
+Determine the training error and the test error. 
+
+```{r}
+# Determine the training error and the test error
+train_error = gbm_model$train.error[best.iter]
+test_error = gbm_model$valid.error[best.iter]
+
+```
