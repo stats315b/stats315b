@@ -102,7 +102,8 @@ Now we consider the penalty function for $\gamma \ge 1$:
 \frac{\partial |a_{k}|}{\partial a_{k}} \in [-1, 1]\\
 \end{gather*}
 
-\vspace{5mm}
+\newpage
+
 \noindent
 Note that the above holds for $\gamma = 1$. Finally, together we have:
 
@@ -178,5 +179,75 @@ So, for $a_{k}$ near zero, we can bound the solution to the derivative of the
 unpenalized loss between plus and minus $\lambda$. This means that the solution 
 will be equal to zero between those values of $\lambda$, so we have shown that 
 $a_{k}$ can be zero with the lasso penalty.
+
+\vspace{5mm}
+\noindent
+We will now show that the elastic net has the ability to set some coefficients 
+to zero.
+
+%-------------------------------------------------------------------------------
+%-------------------Elastic Net Penalty Derivative------------------------------
+%-------------------------------------------------------------------------------
+\begin{gather*}
+%------------------------------line 1-------------------------------------------
+\frac{\partial P_{\gamma}(a)}{\partial a_{k}} = 
+\frac{\partial}{\partial a_{k}}[
+\sum_{j = 1}^{n} (\gamma - 1) \frac{a_{j}^{2}}{2} + 
+(2 - \gamma) |a_{j}|
+]\\
+%------------------------------line 2-------------------------------------------
+\text{Again, the only values that will not evaluate to zero are the } 
+a_{k} 
+\text{ values. So the above evaluates to:}\\
+%------------------------------line 3-------------------------------------------
+(\gamma - 1) a_{k} + (2 - \gamma) \frac{\partial |a_{k}|}{a_{k}}
+\end{gather*}
+
+\vspace{5mm}
+\noindent
+We have shown what will happen for $\gamma = 1$ (Lasso penalty) and for 
+$\gamma = 2$ (Ridge penalty). We only need to consider $1 < \gamma < 2$. With 
+these constraints, we are interested in solving:
+
+%-------------------------------------------------------------------------------
+%-------------------Proof Elastic Net Forces Zero-------------------------------
+%-------------------------------------------------------------------------------
+\begin{gather*}
+%------------------------------line 1-------------------------------------------
+\frac{\partial}{\partial a_{k}} [\hat{R}(a) + \lambda P_{\gamma}(a)] = 
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
+\lambda (\gamma - 1) a_{k} + 
+\lambda (2 - \gamma) \frac{\partial |a_{k}|}{a_{k}}\\
+%------------------------------line 2-------------------------------------------
+\text{For } a_{k} \text{ near zero } 
+-1 \le \frac{\partial |a_{k}|}{a_{k}} \le 1 \implies 
+-\lambda (2 - \gamma) \le 
+-\lambda (2 - \gamma) \frac{\partial |a_{k}|}{a_{k}} \le 
+\lambda (2 - \gamma)\\
+%------------------------------line 3-------------------------------------------
+\text{Then } 
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
+\lambda (\gamma - 1) a_{k} + 
+\lambda (2 - \gamma) \frac{\partial |a_{k}|}{a_{k}} = 0 \implies\\
+%------------------------------line 4-------------------------------------------
+\implies
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
+\lambda (\gamma - 1) a_{k} = 
+- \lambda (2 - \gamma) \frac{\partial |a_{k}|}{a_{k}} \implies\\
+%------------------------------line 5-------------------------------------------
+\implies
+-\lambda (2 - \gamma) \le 
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
+\lambda (\gamma - 1) a_{k} \le
+\lambda (2 - \gamma)
+\end{gather*}
+
+\vspace{5mm}
+\noindent
+The bounded value is a ridge-like solution (with 
+$\lambda ' = (\gamma - 1) \lambda$). $a_{k}$ solutions to this near zero can 
+be bounded by $\lambda (2 - \gamma)$, which implies that some coefficients can 
+be forced to zero (by the same logic as why the lasso forces some coefficients 
+to zero).
 
 \end{document}
