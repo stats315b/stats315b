@@ -1,0 +1,103 @@
+---
+title: "Problem 7 - Regression: California Housing"
+author: "Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas"
+date: "May 22, 2016"
+output: pdf_document
+---
+
+## Libraries
+
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(gbm)
+```
+
+## File Parameters
+
+```{r}
+# Session -> set working directory -> Source file location
+
+set.seed(131)
+
+# Path for data
+data_path <- "data/"
+data_name <- "California_Data.txt"
+data_name <- paste(data_path, data_name, sep = "")
+
+```
+
+## Read in Data
+
+```{r}
+data_0 <- read_csv(file = data_name, col_names = FALSE)
+
+
+# Name data columns
+column_names <- c("House_Value", "Median_Income", "Housing_Median_Age",
+                  "Average_Rooms", "Average_Bedrooms", "Population",
+                  "Average_Occupancy", "Lattitude", "Longitude")
+colnames(data_0) <- column_names
+
+# Make sure the samples are mixed
+set.seed(131)
+data <- data_0[sample(nrow(data_0)),]
+```
+
+## Part (a)
+
+We fit our data using a gbm model and determine the prediction accuracy. 
+
+```{r}
+# Fit model on our data
+set.seed(444) # Random for bag.fraction
+gbm_model <- gbm(House_Value ~ ., data = data , train.fraction = 0.8, interaction.depth = 4,
+                shrinkage = 0.05, n.trees = 10000, bag.fraction = 0.5, cv.folds = 5,
+                distribution = "gaussian", verbose = F)
+
+# Determine the optimal number of trees by cross validation 
+best.iter <- gbm.perf(gbm_model, method = "cv")
+```
+
+Determine the training error and the test error. 
+
+```{r}
+# Determine the training error and the test error
+train_error = gbm_model$train.error[best.iter]
+test_error = gbm_model$valid.error[best.iter]
+
+```
+We quantify the accuracy of the gbm on the data by reporting the mean square error for both the training set and the test set. The training error is `r train_error`, while the test error is `r test_error`. 
+
+## Part (b)
+
+Here we identify the most important variables. 
+
+```{r}
+summary(gbm_model, main = "Relative Influence of all Predictors")
+```
+
+I will list the 4 variables that are over 10% in relative influence. Median income is the most influential variable with a relative influence of 44.1. Average Occupancy is the most second most influencial is the average occupancy which has a relative influence of 14.3. The third most influencial is the longitude with a relative influence of 12.9, followed by lattitude with a relative influence of 10.7. 
+
+## Part (c)
+
+Here we plot the dependence of the response on the most important variables, and on the most important variable pairs. 
+
+
+```{r}
+plot(x=gbm_model, i.var=1, n.trees=best.iter)
+plot(x=gbm_model, i.var=6, n.trees=best.iter)
+plot(x=gbm_model, i.var=7, n.trees=best.iter)
+plot(x=gbm_model, i.var=8, n.trees=best.iter)
+plot(x=gbm_model, i.var=c(1,6), n.trees=best.iter)
+plot(x=gbm_model, i.var=c(1,7), n.trees=best.iter)
+plot(x=gbm_model, i.var=c(1,8), n.trees=best.iter)
+plot(x=gbm_model, i.var=c(6,7), n.trees=best.iter)
+plot(x=gbm_model, i.var=c(7,8), n.trees=best.iter)
+plot(x=gbm_model, i.var=c(6,8), n.trees=best.iter)
+```
+
+We can see that median income has a positive correlation with house value. Average occupancey has a negative correlation with house value and has a steep drop at low occupancy. Lattitude has a netative correlation with house value. And Longitude also has a negative correlation with house value. 
+
+Occupancy and median income don't seem very correlated. There does seem to be a correlation between Lattitude and median income. The lower the lattitude and higher the median income the more the house value. There is also a correlation between longitude and median income. The lower the longitude and higher the median income the more the house value. There doesn't seem to be a correlation between Latitude and average occupancy. There does seem to be a correlation between longitude and lattitude. The lower the lattitude and longitude the more the house value. 

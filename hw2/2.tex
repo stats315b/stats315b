@@ -35,19 +35,25 @@
 \vspace{5 mm}
 \noindent
 Linear regression uses least squares as the error function. When the number of predictors is
-greater than the number of observations in the training data, there exists a perfect fit for the
-model in the high dimension. We do not have a unique coefficient estimate of the least squares.
+greater than the number of observations in the training data, there exist multiple perfect fits for the
+model leading to infinite solutions for the coefficient estimates of the least squares. Thus, the model
+would have a huge varaince.
 
-This model would most certainly leads to high errors on the test data set. Regularization is necessary
-to find the unique coefficient estimates. It also helps in cases when there is a high collinearity/correlation
-among the predictors in the model.
+Regularization is necessary to find the unique coefficient estimates. It also helps in cases when there is a high 
+collinearity/correlation among the predictors in the model. Another case where regularisation helps is when we
+have many noisy variables in the data. In such a case, regularization decreases the coefficients estimates and of
+the noisy variables. 
 
-Regularization is disadvantageous when the number predictors are extremely small. In this case, the bias
-introduced by regularzation might not offset the decrease in variance. 
-Regularization constraints the estimated coefficients and decreases the variance of prediction 
-at the cost of slight increase in the bias. is necessary to make the 
-decreases the variablilty of the model by penalizing on the size of the 
-predictors. 
+Regularization is disadvantageous when the number predictors is extremely small. In this case, one would like 
+to pursue feature augmentation which is not supported by regularization. Another example where regularization 
+fails is when we have a perfect line that fits the model. Generally, regularization fails when the bias introduced 
+by it does not decrease the variance in prediction. 
+
+Sparsity is a reasonable assumption in boosting because we generate multiple trees, not all of which 
+capture the signal in the data. It is always a reasonable assumption in the context because most of the 
+trees generated during boosting do not influence the outcome variable. Most of the times, we simply do
+not have enough the data to estimate a large number of parameters (all possible trees in the boosting
+context).
 
 
 \vspace{5 mm}

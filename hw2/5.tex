@@ -1,0 +1,84 @@
+\documentclass[11pt]{article}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{enumerate}
+\usepackage{mdframed}
+
+\DeclareMathOperator*{\argmin}{argmin}
+\newcommand*{\argminl}{\argmin\limits}
+
+
+\begin{document}
+\begin{center}
+%---------------------------------------------------------------------------------------
+%---------------------------------Header------------------------------------------------
+%---------------------------------------------------------------------------------------
+
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 2, Due 5/22/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Yash Vyas and Tyler Chase}
+}}
+\ \\
+\end{center}
+
+%---------------------------------------------------------------------------------------
+%---------------------------------Answer------------------------------------------------
+%---------------------------------------------------------------------------------------
+
+\section*{Problem 9}
+
+\vspace{5 mm}
+\noindent
+Given our additive function $F(x) = F_{l}(z_{l}) + F_{\backslash l}(z_{\backslash l})$
+ on our subsets, we can represent the partial dependence of $F(x)$ on $z_{l}$ as
+  $E_{z_{\backslash l}}(F(z_{l}, z_{\backslash l}))$ which we can approximate with 
+  $\frac{1}{N} \sum\limits_{i=1}^N F(z_{l}, z_{i\backslash l})$ where $N$ is the
+   number of elements in $z_{\backslash l}$.  This is from Elements of Statistical
+    Learning 10.47 and 10.48 (pg. 369).  
+
+\noindent
+Now we can substitute in our additive function, getting 
+$\frac{1}{N} \sum\limits_{i=1}^N F_{l}(z_{l}) + F_{\backslash l}(z_{i\backslash l})$  
+
+\noindent
+From this we can split the summation: 
+$\frac{1}{N} \sum\limits_{i=1}^N F_{l}(z_{l}) + \frac{1}{N} \sum\limits_{i=1}^N 
+F_{\backslash l}(z_{i\backslash l})$ 
+
+\noindent
+Because $F_{l}(z_{l})$ doesn't depend on i, we arrive at $F_{l}(z_{l}) + \frac{1}{N}
+ \sum\limits_{i=1}^N F_{\backslash l}(z_{i\backslash l})$ which is $F_{l}(z_{l})$ 
+ plus an additive constant, as desired.
+
+\vspace{5 mm}
+\noindent
+Now considering the dependence ignoring the additional variables $z_{\backslash l}$, 
+we have $E[F(x)|z_{l}]$.  We know our result will not depend on $z_{\backslash l}$ 
+and we are trying to estimate $F(x)$, so our result will be the best approximation 
+to $F(x)$ using a function of $z_{l}$ alone.  Because we have this additive model, 
+we know that we will have a factor of $F_{l}(z_{l})$ and an additive constant 
+(possibly zero), but we have no guarantee that it will be exactly $F_{l}(z_{l})$, 
+as it could be scaled by a constant or otherwise altered.  Therefore the dependence
+ ignoring the additional variables $z_{\backslash l}$ will not always be $F_{l}(z_{l})$
+ plus an additive constant.
+
+\vspace{5 mm}
+\noindent
+ The partial dependence of $F(x)$ on $z_{l}$ and the partial dependence of $F(x)$ on 
+ $z_{l}$ ignoring the additional variables $z_{\backslash l}$ will be equivalent
+  when the two subsets $z_{l}$ and $z_{\backslash l}$ are independent.  We can see
+   $E_{z_{\backslash l}}(F(z_{l}, z_{\backslash l})) == E[F(z_{l}, 
+   z_{\backslash l})\|z_{l}]$ only when $z_{l}$ and $z_{\backslash l}$ are independent.
+
+\end{document}

@@ -34,19 +34,24 @@
 
 \vspace{5 mm}
 \noindent
-The advantage of random variable selection strategy is that we reduce the
-possibility of generating highly correlated bagged trees which in turn 
-decreases the chances of overfitting the model on the training data. This
-strategy works best if the learning method is inherently unstable.
+The advantage of random variable selection strategy in random forests is that
+we reduce the possibility of generating highly correlated bagged trees. Highly
+correlated trees lead to low prediction accuracy. The random variable selection 
+strategy works best if the there are very few interaction among the features. Another
+advantage of the method is increase in the computation speed gained due to
+less feature exploration. 
 
-One disadvantage of using the random variable selection strategy would be 
-in the case when the feature matrix is small and has a few noisy predictors
-Here, the split could be made on an irrelevant predictor in some bagged trees.
-Also, when the learning method/target function is stable, the random subset
-selection strategy will lead to bad predictions
+One clear disadvantage of random variable selection strategy is not being able to 
+capture the interaction effects among the features. Besides, we do not have the
+liberty to split on the best feature due to the constraint on variable selection. This 
+leads to increase in the bias of the trees generated on average and may lead to
+decrease in prediction accuracy when many trees with low predictive power are 
+averaged.
 
-Alternate startegy to random variable subset selection: Switch the root nodes,
-Fix the tree depth?
+An alternate startegy to random variable selection in the random forests is to 
+randomly change the size of bootstrap sample and allow all variables to be split at 
+each node. This strategy introduces variation in the trees due to sampling and 
+ensures capturing interaction effects. 
 
 
 \vspace{5 mm}
