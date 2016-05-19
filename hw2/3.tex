@@ -17,9 +17,9 @@
 
 \begin{document}
 \begin{center}
-%---------------------------------------------------------------------------------------
-%---------------------------------Header------------------------------------------------
-%---------------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%---------------------------------Header----------------------------------------
+%-------------------------------------------------------------------------------
 
 \framebox{\parbox{6.5in}{
 {\bf{STATS 315B: Data Mining, Spring 2016}}\\
@@ -41,26 +41,37 @@ $\hat{a}(\lambda)$ will be unique since it is a sum of convex functions. We
 will now attempt to minimize the sume of the empircal risk and the penalty. 
 First, we consider minimizing the empirical risk:
 
+%-------------------------------------------------------------------------------
+%------------------------Emperical Risk Derivative------------------------------
+%-------------------------------------------------------------------------------
 \begin{gather*}
+%------------------------------line 1-------------------------------------------
 \text{Let } L(y_{i}, a_{0} + \sum_{j = 1}^{n} a_{j}x_{ij}) = L 
 \text{ and } a_{0} + \sum_{j = 1}^{n} a_{j}x_{ij} = f(x, a) = f\\
+%------------------------------line 2-------------------------------------------
 \frac{\partial \hat{R}}{\partial a_{k}} = 
 \frac{1}{N} \sum_{j = 1}^{N} \frac{\partial L}{\partial a_{k}}\\
+%------------------------------line 3-------------------------------------------
 \text{By the chain rule: } 
 \frac{\partial L}{\partial a_{k}} = 
 \frac{\partial L(y_{i}, f(x, a))}{\partial a_{k}} = 
 \frac{\partial L(y_{i}, f(x, a))}{f(x, a)} 
 \frac{\partial f(x, a)}{\partial a_{k}} = 
 \frac{\partial L}{\partial f} \frac{\partial f}{\partial a_{k}}\\
+%------------------------------line 4-------------------------------------------
 \text{Now consider } 
 \frac{\partial f}{\partial a_{k}} = 
 \frac{\partial}{\partial a_{k}} [a_{0} + \sum_{j = 1}^{n} a_{j}x_{ij}]\\
+%------------------------------line 5-------------------------------------------
 \text{Note that } a_{k} 
 \text{ only appears in the sumation and is multiplied by } x_{ik}\\
+%------------------------------line 6-------------------------------------------
 \text{So all values in } f 
 \text{ will evaluate to zero except } a_{k}x_{ik}\\
+%------------------------------line 7-------------------------------------------
 \text{Then } 
 \frac{\partial}{\partial a_{k}} [a_{0} + \sum_{j = 1}^{n} a_{j}x_{ij}] = x_{ik}\\
+%------------------------------line 8-------------------------------------------
 \text{And } 
 \frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial a_{k}} = 
 \frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} 
@@ -70,33 +81,102 @@ First, we consider minimizing the empirical risk:
 
 \vspace{5mm}
 \noindent
-Now we consider the penalty function. Let's assume that $a_{k} > 0$, then:
+Now we consider the penalty function for $\gamma \ge 1$:
 
+%-------------------------------------------------------------------------------
+%---------------------------Penalty Derivative----------------------------------
+%-------------------------------------------------------------------------------
 \begin{gather*}
+%------------------------------line 1-------------------------------------------
 \frac{\partial P_{\gamma} (a)}{\partial a_{k}} = 
-\frac{\partial}{\partial a_{k}} \sum_{j = 1}^{n} a_{j}^{\gamma}\\
+\frac{\partial}{\partial a_{k}} \sum_{j = 1}^{n} |a_{j}|^{\gamma}\\
+%------------------------------line 2-------------------------------------------
 \text{Note, the only value in this sum that depends on } a_{k} 
-\text{ is } a_{k}^{\gamma}\\
-\text{So, } \frac{\partial}{\partial a_{k}} \sum_{j = 1}^{n} a_{j}^{\gamma} = 
-\frac{\partial}{\partial a_{k}} a_{k}^{\gamma} = 
-\gamma a_{k}^{\gamma - 1}
+\text{ is } |a_{k}|^{\gamma}\\
+%------------------------------line 3-------------------------------------------
+\text{So, } \frac{\partial}{\partial a_{k}} \sum_{j = 1}^{n} |a_{j}|^{\gamma} = 
+\frac{\partial}{\partial a_{k}} |a_{k}|^{\gamma} = 
+\gamma a_{k}^{\gamma - 1} \frac{\partial |a_{k}|}{\partial a_{k}} 
+\text{, where } \frac{\partial |a_{k}|}{\partial a_{k}} 
+\text{ is the subgradient and } 
+\frac{\partial |a_{k}|}{\partial a_{k}} \in [-1, 1]\\
 \end{gather*}
 
 \vspace{5mm}
 \noindent
-Then, together we have:
+Note that the above holds for $\gamma = 1$. Finally, together we have:
 
+%-------------------------------------------------------------------------------
+%---------------------------Combined Derivative---------------------------------
+%-------------------------------------------------------------------------------
 \begin{gather*}
+\frac{\partial}{\partial a_{k}} [\hat{R}(a) + \lambda P_{\gamma}(a)] = 
 \frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
-\gamma a_{k}^{\gamma - 1} = 0
+\gamma a_{k}^{\gamma - 1} \frac{\partial |a_{k}|}{a_{k}}
 \end{gather*}
 
 \vspace{5mm}
 \noindent
-How do we solve this? The partial of L with respect to f is going to depend on 
-the a's too, so we can't solve this directly. Is there a property of convex 
-functions that we don't know about that we could use? Similar things will 
-happen with the elastic net. Are we to prove this for least squares and not 
-general convex?
+To find the minimum, we would need to set the above equal to zero and find the 
+values of $a$ that satisfy the equality. Now, let's assume that $\gamma > 1$. 
+We will show by contradiction that values of $a$ are not forced to zero by 
+contradiction. Assume that some $a_{k} = 0$, then:
+
+%-------------------------------------------------------------------------------
+%---------------------------Proof by Contradiction------------------------------
+%-------------------------------------------------------------------------------
+\begin{gather*}
+%------------------------------line 1-------------------------------------------
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
+\gamma a_{k}^{\gamma - 1} \frac{\partial |a_{k}|}{a_{k}} = 
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
+\gamma \times 0^{\gamma - 1} \times \frac{\partial |a_{k}|}{a_{k}} = 
+%------------------------------line 2-------------------------------------------
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik}\\
+\text{Then } 
+\frac{\partial}{\partial a_{k}} [\hat{R}(a) + \lambda P_{\gamma}(a)] = 0 \implies 
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} = 0
+\end{gather*}
+
+\vspace{5mm}
+\noindent
+Note that the above is just the derivative of the emperical risk set equal to 
+zero. Its solution then will just be the standard unpenalized solution and 
+will not necessarily equal zero. This is a contradiction to our assumption that 
+$a_{k} = 0$, thus $a_{k} \ne 0$ and all coefficients along the path indexed by 
+$\lambda$ are not necessarily equal to zero.
+
+\vspace{5mm}
+\noindent
+We will now show that getting zero coefficients is possible for the lasso 
+penalty. Assume $\gamma = 1$.
+
+%-------------------------------------------------------------------------------
+%-------------------------------Lasso Proof-------------------------------------
+%-------------------------------------------------------------------------------
+\begin{gather*}
+%------------------------------line 1-------------------------------------------
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
+\gamma a_{k}^{\gamma - 1} \frac{\partial |a_{k}|}{a_{k}} = 
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
+\lambda \frac{\partial |a_{k}|}{a_{k}}\\
+%------------------------------line 2-------------------------------------------
+\text{For } a_{k} \text{ near zero } 
+-1 \le \frac{\partial |a_{k}|}{a_{k}} \le 1 \implies 
+-\lambda \le -\lambda \frac{\partial |a_{k}|}{a_{k}} \le \lambda\\
+%------------------------------line 3-------------------------------------------
+\text{So } 
+\frac{\partial}{\partial a_{k}} [\hat{R}(a) + \lambda P_{\gamma}(a)] = 0 \implies 
+-\lambda \frac{\partial |a_{k}|}{a_{k}} = 
+\frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} \implies 
+-\lambda \le \frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} \le \lambda
+\end{gather*}
+
+\vspace{5mm}
+\noindent
+So, for $a_{k}$ near zero, we can bound the solution to the derivative of the 
+unpenalized loss between plus and minus $\lambda$. This means that the solution 
+will be equal to zero between those values of $\lambda$, so we have shown that 
+$a_{k}$ can be zero with the lasso penalty.
 
 \end{document}
