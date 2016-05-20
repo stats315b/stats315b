@@ -1,5 +1,5 @@
 ---
-title: "Probelem 6 - Binary Classification: Spam Email"
+title: "Probelem 8 - Income Prediction"
 author: "Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas"
 date: "May 22, 2016"
 output: pdf_document
@@ -7,17 +7,17 @@ output: pdf_document
 
 ## Libraries
 
-```{r}
-library(ggplot2)
+```{r, cache=TRUE, message=FALSE}
 library(dplyr)
 library(readr)
 library(gbm)
 library(purrr)
+library(ggplot2)
 ```
 
 ## File Parameters
 
-```{r}
+```{r, cache=TRUE}
 # Session -> set working directory -> Source file location
 
 # Path for data
@@ -97,7 +97,7 @@ this because GBM will take the first x% specified as training data and the
 remaining as testing data. We want to ensure that the data is properly shuffled 
 first to mimic random sampling across our data.
 
-```{r}
+```{r, cache=TRUE}
 # Randomize the data
 n <- dim(df)[1]
 df <- df[sample(n),]
@@ -106,8 +106,10 @@ df <- df[sample(n),]
 train_n <- round(0.8 * n, 0)
 test_n <- n - train_n
 train <- df[0:train_n,]
-test_x <- df[(train_n + 1):n, 2:14]
-test_y <- df[(train_n + 1):n, 1]
+test_x <- df[, 2:14]
+test_y <- df[, 1]
+#test_x <- df[(train_n + 1):n, 2:14]
+#test_y <- df[(train_n + 1):n, 1]
 ```
 
 ## Fitting the GBM
@@ -115,21 +117,24 @@ test_y <- df[(train_n + 1):n, 1]
 We now fit our first model. We will make our first model the same as that in 
 the tutorial.
 
-```{r}
+```{r, cache=TRUE}
+# Run with many tree iterations to be trimmed later
 fit <- gbm(income~., 
            data = df, 
            train.fraction = 1.0, 
-           interaction.depth = 1, 
+           interaction.depth = 4, 
            shrinkage = .05, 
-           n.trees = 2500, 
+           n.trees = 1000, 
            bag.fraction = 0.5, 
            cv.folds = 5, 
            distribution = "multinomial", 
            verbose = TRUE)
 
+# Find best iteration by 5 fold crossvalidation
 gbm.perf(object = fit, method = "cv")
-bestIter_test <- gbm.perf(object = fit, method = "cv")
-summary(fit)
+bestIter_cv <- gbm.perf(object = fit, method = "cv")
+
+bestIter_cv
 ```
 
 We use 5 fold cross validation to pick our best number of trees. We will then 
@@ -140,43 +145,92 @@ use this amount (`bestIter_test`) to predict on our holdout testing data.
 We now apply the predictions to our test data and generate the 
 misclassification error.
 
-```{r}
-# Determine Predictions
-pred <- predict(fit, test_x, bestIter_test)
-pred_mat <- matrix(0, nrow = dim(test_x)[1], ncol = 1)
-for (i in seq(1, dim(test_x)[1], 1)) {
-  beg <- (i - 1) * 9 + 1
-  end <- i * 9
-  k <- which.max(pred[beg:end])
-  pred_mat[i, 1] <- k
-}
+```{r, cache=TRUE}
+# Determine Predictions based on best CV iteration
+pred <- as.data.frame(predict(fit, test_x, bestIter_cv))
 
-# Compare misclassifcations to test data
-test_y <- as.matrix(test_y)
-test_y <- as.matrix(map(test_y, as.integer))
+# Rename columns of our prediction
+pred_name <- c("income 1",
+               "income 2",
+               "income 3",
+               "income 4",
+               "income 5",
+               "income 6",
+               "income 7",
+               "income 8",
+               "income 9")
+colnames(pred) <- pred_name
 
-count_miss <- 0
-for (i in seq_len(length(test_y))) {
-  if (test_y[i] != pred_mat[i, 1]) {
-    count_miss <- count_miss + 1
-  }
-}
+# Return the column (class) with maximum value per observation. bind with test y
+pred <- as.data.frame(max.col(pred))
+pred <- cbind(pred, test_y) %>% 
+  rename(test = income, pred = `max.col(pred)`)
 
+# Create table of all correct classifications (true) vs misclass (false)
+misclass <- pred %>% 
+  mutate(correct_class = (pred == test)) %>% 
+  count(correct_class)
 
-
-test_y - pred_mat
+# Compute misclassification error
+tot_obs <- misclass$n[1] + misclass$n[2]
+idx <- which.min(misclass$correct_class)
+mc_error <- misclass$n[idx]/tot_obs
+mc_error
+hw1_error <- 0.65
+improvement <- 1 - mc_error/hw1_error
 ```
 
+```{r}
+# Run everything
+```
 
+## Probelem 8 - Income Prediction
 
-With a direct copy from the tutorial and using a training/testing method for 
-selecting the correct number of iterations, we pick to use `bestIter_test` as 
-our optimal number of iterations.
+We get `mc_error` as our boosted tree error, which as compared to our 
+missclassification error from problem 1 is a `improvement` decrease in 
+misclassification. Our fit is marginally better. Our optimal number of trees 
+that we fit is `bestIter_cv `. We selected this based on a 5-fold cross 
+validation.
 
+We fit trees with depth of 4 only because they appeared to fit better than 
+deeper and even shallower trees. We bagged on only 50% of the data. Using 100% 
+seemed to make our model worse.
 
-Things to test:
+The most important predictors for income in order are:
 
-* Shrinkage
-* bag.fraction
-* interaction.depth
-* shrinkage
+```{r}
+summary(fit)
+```
+
+We notice that the variables that seem to be the most important (occupation, 
+age, and housholder status) were also important in our homework 1 model. 
+Namely, occupation was our primary split, as well as some of our nodes that 
+predicted income. These variables having higher relative importance makes 
+sense - income is primarily tied to the type of work you do. Also, typically 
+the older you are in a certain occupation the more you earn. Further, being 
+able to afford to own a home defines a certain threshold for income.
+
+The fact that gender does not appear to be very important (it ranks second to 
+last in relative imortance) is not indicative that it our results is 
+inconsistent with the national average result. It is possible that being a 
+woman correlates with another factor that predicts better across the sexes for 
+their income level. 
+
+For example, one of the traditional explanations for why 
+women on average earn less than men is traditionally women tend to be the 
+homemaker, which there is generally no money in. In fact, a quick plot shows us 
+that this is the case.
+
+```{r}
+df %>% 
+  ggplot() +
+  geom_bar(mapping = aes(x = occupation)) + 
+  facet_grid(.~sex)
+```
+
+The plot labeld 1 is for men and 2 is for women. Homemaking is the 5 label on 
+the x-axis (also note clerical which is label 4, also a typical low paying job). 
+Notice that women constitute the majority of homemaking (and clerical). Also 
+note that occupation was one of the most important variables in our model. It's 
+possible that occupation and maybe some other variables already split out the 
+differences between men and women before needing to split on sex directly.
