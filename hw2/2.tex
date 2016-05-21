@@ -39,16 +39,24 @@ greater than the number of observations in the training data, we have multiple p
 model and therefore, infinite solutions for the coefficient estimates of the least squares. Thus, the model
 would have a huge variance.
 
-Regularization is necessary to find the unique coefficient estimates when the number of observations is less than
-the number of predictors. It also helps in cases when there is a high collinearity/correlation among the predictors in the model. Another case where regularisation helps is when there exist multiple noisy variables in the data. In such a case, regularization decreases the coefficient estimates of the noisy variables. 
+Regularization is necessary to find the unique coefficient estimates when the number of observations
+is less than the number of predictors. It also helps in cases when there is a high collinearity/correlation 
+among the predictors in the model. Another case where regularisation helps is when there exist multiple 
+noisy variables in the data. In such a case, regularization decreases the coefficient estimates of the noisy 
+variables. 
 
-Regularization is disadvantageous when the number predictors is extremely small. In this case, one would ideally like 
-to pursue feature augmentation. But regularisation does not support feature augmentation. Another example where regularization fails is when we have a perfect line/plane that fits the model. 
-Generally, regularization fails when the bias introduced by it does not lead to drastic decrease in the variance of prediction. 
+Regularization is disadvantageous when the number predictors is extremely small. In this case, one would 
+ideally like to pursue feature augmentation. But regularisation does not support feature augmentation. 
+Another example where regularization fails is when we have a perfect line/plane that fits the model. 
+Generally, regularization fails when the bias introduced by it does not lead to drastic decrease in the 
+variance of prediction. 
 
-During boosting, we generate a linear combination of all possible trees. Sparsity is a reasonable assumption in this situation because we generate multiple trees, and only a fraction of the trees capture the signal in the data. 
+During boosting, we generate a linear combination of all possible trees. Sparsity is a reasonable assumption 
+in this situation because we generate multiple trees, and only a fraction of the trees capture the signal in the data. 
 
-Most of the trees generated in boosting do not influence the outcome variable. We simply do not have enough data to estimate a large number of parameters (all possible trees in the boosting context). Hence, sparsity assumption always holds true in boosting.
+Most of the trees generated in boosting do not influence the outcome variable. We simply do not have 
+enough data to estimate a large number of parameters (all possible trees in the boosting context). Hence, 
+sparsity assumption always holds true in boosting.
 
 
 \vspace{5 mm}
