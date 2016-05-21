@@ -2,12 +2,12 @@
 title: 'Problem 6 - Binary Classification: Spam Email'
 author: "Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas"
 date: "May 22, 2016"
-output: pdf_document
+output: html_document
 ---
 
 ## Libraries
 
-```{r, echo=FALSE, warning=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(ggplot2)
 library(dplyr)
 library(readr)
@@ -19,7 +19,7 @@ library(gbm)
 ```{r}
 # Session -> set working directory -> Source file location
 
-set.seed(131)
+set.seed(123)
 
 # Path for data
 data_path <- "data/"
@@ -70,42 +70,41 @@ gbm0.spam.mc
 df_not <- df %>% filter(tst$type == 0)
 gbm0.not.mc <- (916 - sum(df_not$equ))/916
 gbm0.not.mc
+
+rm(df, df_spam, df_not)
 ```
 
-Here we can see our overall estimate of misclassification rate is .0391.  Our misclassification percentage for spam in the testing set is 5.18% and for not spam is 3.06%
+Here we can see our overall estimate of misclassification rate is .0397.  Our misclassification percentage for spam in the testing set is 5.66% and for not spam is 2.84%
 
 
 ## Part (B)
 
-Now we will set up a function to let us quickly edit our cost parameter and find our misclassification rates.
+Now we will edit our weights to obtain our desired misclassification rates.
 
 ```{r}
 
-cost <- function(cst) {
-df <- cbind(as.data.frame(gbm0.pred), tst$type)
-df <- df %>% mutate(pred = ifelse(gbm0.pred >= cst, 1, 0), equ = pred == tst$type)
-gbm0.tst.mc <- (1534 - sum(df$equ))/1534
-gbm0.tst.mc
+wvec <- trn %>% mutate(wght = ifelse(type == 0, .99, .01)) %>% .$wght
+
+gbm1 <- gbm(type ~ . , data = trn, train.fraction = 1, interaction.depth=4, shrinkage=.03,  n.trees=2500, bag.fraction=0.5, cv.folds=5, distribution="bernoulli", weights = wvec)
+
+gbm1.pred <- predict(gbm1, tst, type="response", n.trees=300)
+
+df <- cbind(as.data.frame(gbm1.pred), tst$type)
+df <- df %>% mutate(pred = ifelse(gbm1.pred >= .5, 1, 0), equ = pred == tst$type)
+gbm1.tst.mc <- (1534 - sum(df$equ))/1534
+gbm1.tst.mc
 
 df_spam <- df %>% filter(tst$type == 1)
-gbm0.spam.mc <- (618 - sum(df_spam$equ))/618
-gbm0.spam.mc
+gbm1.spam.mc <- (618 - sum(df_spam$equ))/618
+gbm1.spam.mc
 
 df_not <- df %>% filter(tst$type == 0)
-gbm0.not.mc <- (916 - sum(df_not$equ))/916
-gbm0.not.mc
-
-return(c(gbm0.tst.mc, gbm0.spam.mc, gbm0.not.mc))
-}
-
-cost(.5)
-cost(.6)
-cost(.8)
-cost(.955)
+gbm1.not.mc <- (916 - sum(df_not$equ))/916
+gbm1.not.mc
 
 ```
 
-Now we see that with a very high relative cost we can reach the desired non-spam misclassification rate, but our overall misclassification rate has risen to .1545.  Our misclassification percentage for spam in the testing set is now 38.02% and for not spam is .22%
+Now we see that with a very high relative cost we can reach the desired non-spam misclassification rate, but our overall misclassification rate has risen to .1578.  Our misclassification percentage for spam in the testing set is now 38.83% and for not spam is .22%
 
 ```{r}
 
@@ -113,7 +112,7 @@ summary(gbm0,main="Relative Influence for all Predictors")
 
 ```
 
-Using the recommended relative.influence method for determining importance, here we can see that the most important predictors are '!', 'remove', and '$' at 18.87, 14.82, and 14.56 rel.inf respectively.  After this the influence drops nearly 40% to 8.83 for 'hp'.
+Using the recommended relative.influence method for determining importance, here we can see that the most important predictors are '!', '$' and 'remove', at 19.75, 15.09, and 14.61 rel.inf respectively.  After this the influence drops nearly 41% to 8.69 for 'hp'.
 
 
 
@@ -125,22 +124,23 @@ best.iter<-gbm.perf(gbm0,method="OOB")
 
 ```
 
-Looking at the plot of the most important variable, '!', we can see that the effect is almost binary.  If an email contains no '!', that suggests that it is not spam, but if it contains even one '!', it suggests that it is spam.  Interestingly, the positive (is spam) effect is slightly stronger towards the middle of the distribution on '!', and drops slightly towards the end.  
+Looking at the plot of the most important variable, '!', we can see that the effect is almost binary.  If an email contains no '!', that strongly suggests that it is not spam, but if it contains even one '!', it suggests that it is spam.  Interestingly, the positive (is spam) effect levels off slightly at f('!') = 1, before rising to the limit of 1.5. 
 
 ```{r}
 plot(x=gbm0,i.var=52,n.trees=best.iter, main="Partial Dependence of !") 
 ```
 
-The plot for 'remove' suggests that even a slightly positive value of 'remove' strongly predicts that the email is spam.  
-
-```{r}
-plot(x=gbm0,i.var=7,n.trees=best.iter, main="Partial Dependence of result") 
-```
-
-The plot for '$' is very similar to the plot for '!', but without the slight bump in the middle.  Once again, a value even slightly > 0 for ' $' suggests that the email is spam, though the prediction effect here is significantly weaker than it was for 'result' or even '!'  
+The plot for '$' is very similar to the plot for '!', but with a smoother approach to the maximum value for f(' $ ').  Once again, a value even slightly > 0 for ' $' suggests that the email is spam, though the prediction effect here is significantly weaker than it was for 'result' or '!'. 
 
 ```{r}
 plot(x=gbm0,i.var=53,n.trees=best.iter, main="Partial Dependence of $") 
 ```
+
+The plot for 'remove' suggests that even a slightly positive value of 'remove' strongly predicts that the email is spam.  In addition, the prediction effect for remove appears to be a good deal stronger than the other two predictors, i.e. a positive value for remove suggests that the email is spam more so than '!' or '$'.
+
+```{r}
+plot(x=gbm0,i.var=7,n.trees=best.iter, main="Partial Dependence of remove") 
+```
+
 
 
