@@ -22,6 +22,7 @@ OccData.table = read.table(file = 'Occupation_Data.txt', header = F, sep = ',')
 
 We name the column headers and convert the values into categorical variables.
 The columns that have unordered categorical variables are:
+
 * Occupation
 * House Type
 * Sex
@@ -71,7 +72,7 @@ OccData.table$Below18Peop = ordered(OccData.table$Below18Peop, levels = c(0:9))
 
 ## Randomize the Data
 
-We shuffle the data in order to ensure that the gbm choose does sequencial rows
+We shuffle the data in order to ensure that gbm does not choose sequential rows
 in test or train datasets.
 
 
@@ -90,7 +91,7 @@ train = sample(1:nrow(OccData.tableShuffle), 70/100*nrow(OccData.tableShuffle))
 
 ## Fitting the GBM
 
-We now fit our first model. We choose 2500 randomly as values for number of trees.
+We now fit our model. We choose 5000 randomly as value for number of trees.
 
 ```{r, cache=TRUE}
 # Model
@@ -157,13 +158,14 @@ occupation of a person. The importance of these variables corroborates our
 beliefs. Age clearly determines the type of work that one pursues. Also,
 occupations are highly associated with education levels. Rarely would 
 one find a person with low education level to be in a professional role. 
-and all occupation levels do not offer same pay. 
+Also, all occupation levels do not offer same pay. 
 
 We also noticed that the type of occupation of a person also depends on whether
 there is a dual source of income in the house and the sex of the person.
 
 Besides, we find that the misclassification rate for a person in one of
-the following classes is highly accurate 
+the following classes is low:
+
 * Professional/Managerial
 * Homemaker
 * Student, HS or College
@@ -171,10 +173,16 @@ the following classes is highly accurate
 
 as compared to predicting the occupation of a person belonging to the following
 class:
+
 * Sales Worker
 * Factory Worker/Laborer/Driver
 * Clerical/Service Worker
 * Military
 * Unemployed
 
+The high prediction accuracy of occupation in the first group is due to high 
+correlation between the certain input variables and occupation types. Professional/
+Managerial is linked with education, Retired and Student, HS or College is linked 
+with age while Homemaker is linked with sex. There are no clear attributes for the
+occupation types in the second group.
 
