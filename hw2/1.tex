@@ -37,21 +37,21 @@
 The advantage of random variable selection strategy in random forests is that
 we reduce the possibility of generating highly correlated bagged trees. Highly
 correlated trees lead to low prediction accuracy. The random variable selection 
-strategy works best if the there are very few interaction among the features. Another
-advantage of the method is increase in the computation speed gained due to
+strategy works best if the there are very few interactions among the features.
+Another advantage of the method is the increased computational efficiency due to
 less feature exploration. 
 
-One clear disadvantage of random variable selection strategy is not being able to 
-capture the interaction effects among the features. Besides, we do not have the
-liberty to split on the best feature due to the constraint on variable selection. This 
-leads to increase in the bias of the trees generated on average and may lead to
-decrease in prediction accuracy when many trees with low predictive power are 
-averaged.
+The major disadvantage of random variable selection strategy is not being able to 
+capture the interaction effects among the features in most of the bagged trees. 
+Besides, one does not have the liberty to split on the best feature due to the constraint
+of random variable selection. This constraint leads to increase in the bias of the trees
+generated on average and may lead to decrease in prediction accuracy when many 
+trees with low predictive power are averaged.
 
 An alternate startegy to random variable selection in the random forests is to 
 randomly change the size of bootstrap sample and allow all variables to be split at 
 each node. This strategy introduces variation in the trees due to sampling and 
-ensures capturing interaction effects. 
+ensures capturing interaction effects among the features. 
 
 
 \vspace{5 mm}
