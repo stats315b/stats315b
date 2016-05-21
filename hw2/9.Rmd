@@ -69,7 +69,7 @@ OccData.table$Below18Peop = ordered(OccData.table$Below18Peop, levels = c(0:9))
 
 ```
 
-## Randomize the Dat
+## Randomize the Data
 
 We shuffle the data in order to ensure that the gbm choose does sequencial rows
 in test or train datasets.
@@ -106,7 +106,7 @@ bestIter_cv
 ```
 
 We use 5 fold cross validation to pick our best number of trees. We will then 
-use this amount (`bestIter_test`) to predict on our holdout testing data.
+use this amount (4997) to predict on our holdout testing data.
 
 ## Determine Misclassification Rate on Test data
 
@@ -132,10 +132,10 @@ for (i in 1:9){
 err.class
 ```
 
-## Probelem 8 - Income Prediction
+## Occupation Prediction
 
-We get `misclass.rate` as our overall boosted tree misclassification error.
-Our optimal number of trees that we fit is `bestIter_cv `.
+We get 0.420617 as our overall boosted tree misclassification error.
+Our optimal number of trees that we fit is 4997.
 We selected this based on a 5-fold cross validation.
 
 We have fit trees with depth of 4. And used the default shrinkage 
