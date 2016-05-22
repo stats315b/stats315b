@@ -5,18 +5,16 @@ date: "May 22, 2016"
 output: html_document
 ---
 
-## Libraries
+##Part A:
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
+```{r, echo = FALSE, message=FALSE, warning = FALSE}
 library(ggplot2)
 library(dplyr)
 library(readr)
 library(gbm)
 ```
 
-## File Parameters
-
-```{r}
+```{r, echo = FALSE}
 # Session -> set working directory -> Source file location
 
 set.seed(123)
@@ -29,18 +27,12 @@ file_tst <- paste(data_path, file_tst, sep = "")
 file_trn <- paste(data_path, file_trn, sep = "")
 ```
 
-## Read in Data
-
-```{r}
+```{r, echo = FALSE}
 tst <- read_csv(file = file_tst, col_names = FALSE)
 trn <- read_csv(file = file_trn, col_names = FALSE)
 ```
 
-Here we require both the testing and training spam datasets from the course website, stored as comma separated values.
-
-To aid in interpretability later we will correct the column names now.
-
-```{r}
+```{r, echo = FALSE}
 cnms <- c("make", "address", "all", "3d", "our", "over", "remove", "internet","order", "mail", "receive", "will", "people", "report", "addresses","free", "business", "email", "you", "credit", "your", "font","000","money", "hp", "hpl", "george", "650", "lab", "labs", "telnet", "857", "data", "415", "85", "technology", "1999", "parts","pm", "direct", "cs", "meeting", "original", "project", "re","edu", "table", "conference", ";", "(", "[", "!", "$", "#", "CAPAVE", "CAPMAX", "CAPTOT","type") 
 
 colnames(tst) <- cnms
@@ -48,12 +40,7 @@ colnames(trn) <- cnms
 
 ```
 
-
-## Part (a)
-
-Here we will fit a gbm model on the training data and check its misclassification on the testing dataset.
-
-```{r}
+```{r, echo = FALSE}
 
 gbm0 <- gbm(type ~ . , data = trn, train.fraction = 1, interaction.depth=4, shrinkage=.05,  n.trees=2500, bag.fraction=0.5, cv.folds=5, distribution="bernoulli")
 
@@ -61,27 +48,25 @@ gbm0.pred <- predict(gbm0, tst, type="response", n.trees=300)
 df <- cbind(as.data.frame(gbm0.pred), tst$type)
 df <- df %>% mutate(pred = ifelse(gbm0.pred >= .5, 1, 0), equ = pred == tst$type)
 gbm0.tst.mc <- (1534 - sum(df$equ))/1534
-gbm0.tst.mc
+
 
 df_spam <- df %>% filter(tst$type == 1)
 gbm0.spam.mc <- (618 - sum(df_spam$equ))/618
-gbm0.spam.mc
+
 
 df_not <- df %>% filter(tst$type == 0)
 gbm0.not.mc <- (916 - sum(df_not$equ))/916
-gbm0.not.mc
+
 
 rm(df, df_spam, df_not)
 ```
 
-Here we can see our overall estimate of misclassification rate is .0397.  Our misclassification percentage for spam in the testing set is 5.66% and for not spam is 2.84%
+After fitting a gbm model on the training data and checking its misclassification on the testing dataset, we can see our overall estimate of misclassification rate is `r gbm0.tst.mc`.  Our misclassification percentage for spam in the testing set is `r 10*gbm0.spam.mc`% and for not spam is `r 10*gbm0.not.mc`%
 
 
-## Part (B)
+## Part B:
 
-Now we will edit our weights to obtain our desired misclassification rates.
-
-```{r}
+```{r, echo = FALSE, results=FALSE}
 
 wvec <- trn %>% mutate(wght = ifelse(type == 0, .99, .01)) %>% .$wght
 
@@ -92,21 +77,20 @@ gbm1.pred <- predict(gbm1, tst, type="response", n.trees=300)
 df <- cbind(as.data.frame(gbm1.pred), tst$type)
 df <- df %>% mutate(pred = ifelse(gbm1.pred >= .5, 1, 0), equ = pred == tst$type)
 gbm1.tst.mc <- (1534 - sum(df$equ))/1534
-gbm1.tst.mc
+
 
 df_spam <- df %>% filter(tst$type == 1)
 gbm1.spam.mc <- (618 - sum(df_spam$equ))/618
-gbm1.spam.mc
+
 
 df_not <- df %>% filter(tst$type == 0)
 gbm1.not.mc <- (916 - sum(df_not$equ))/916
-gbm1.not.mc
 
 ```
 
-Now we see that with a very high relative cost we can reach the desired non-spam misclassification rate, but our overall misclassification rate has risen to .1578.  Our misclassification percentage for spam in the testing set is now 38.83% and for not spam is .22%
+After editing our weights to obtain our desired misclassification rates, we see that with a very high relative cost we can reach the desired non-spam misclassification rate, but our overall misclassification rate has risen to `r gbm1.tst.mc`.  Our misclassification percentage for spam in the testing set is now `r 10*gbm1.spam.mc`% and for not spam is `r 10*gbm1.not.mc`%.
 
-```{r}
+```{r, echo = FALSE, fig.keep='none'}
 
 summary(gbm0,main="Relative Influence for all Predictors")
 
@@ -116,31 +100,93 @@ Using the recommended relative.influence method for determining importance, here
 
 
 
-Now we will first set our number of trees to the best iteration, chosen by the Out-Of-Bag error, and then we proceeded to create our dependence plots.
-
-```{r, warning=FALSE}
+```{r, warning=FALSE, echo = FALSE, fig.keep='none'}
 
 best.iter<-gbm.perf(gbm0,method="OOB")
 
 ```
 
+Now after setting our number of trees to the best iteration, chosen by the Out-Of-Bag error, we can proceed to create our dependence plots.
+
 Looking at the plot of the most important variable, '!', we can see that the effect is almost binary.  If an email contains no '!', that strongly suggests that it is not spam, but if it contains even one '!', it suggests that it is spam.  Interestingly, the positive (is spam) effect levels off slightly at f('!') = 1, before rising to the limit of 1.5. 
 
-```{r}
+```{r, echo = FALSE}
 plot(x=gbm0,i.var=52,n.trees=best.iter, main="Partial Dependence of !") 
 ```
 
 The plot for '$' is very similar to the plot for '!', but with a smoother approach to the maximum value for f(' $ ').  Once again, a value even slightly > 0 for ' $' suggests that the email is spam, though the prediction effect here is significantly weaker than it was for 'result' or '!'. 
 
-```{r}
+```{r, echo = FALSE}
 plot(x=gbm0,i.var=53,n.trees=best.iter, main="Partial Dependence of $") 
 ```
 
 The plot for 'remove' suggests that even a slightly positive value of 'remove' strongly predicts that the email is spam.  In addition, the prediction effect for remove appears to be a good deal stronger than the other two predictors, i.e. a positive value for remove suggests that the email is spam more so than '!' or '$'.
 
-```{r}
+```{r, echo = FALSE}
 plot(x=gbm0,i.var=7,n.trees=best.iter, main="Partial Dependence of remove") 
 ```
 
+Code Appendix:
 
+```{r, eval = FALSE}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(gbm)
 
+set.seed(123)
+
+data_path <- "data/"
+file_tst <- "Spam.Test.txt"
+file_trn <- "Spam_Train.txt"
+file_tst <- paste(data_path, file_tst, sep = "")
+file_trn <- paste(data_path, file_trn, sep = "")
+
+tst <- read_csv(file = file_tst, col_names = FALSE)
+trn <- read_csv(file = file_trn, col_names = FALSE)
+
+cnms <- c("make", "address", "all", "3d", "our", "over", "remove", "internet","order", "mail", "receive", "will", "people", "report", "addresses","free", "business", "email", "you", "credit", "your", "font","000","money", "hp", "hpl", "george", "650", "lab", "labs", "telnet", "857", "data", "415", "85", "technology", "1999", "parts","pm", "direct", "cs", "meeting", "original", "project", "re","edu", "table", "conference", ";", "(", "[", "!", "$", "#", "CAPAVE", "CAPMAX", "CAPTOT","type") 
+
+colnames(tst) <- cnms
+colnames(trn) <- cnms
+
+gbm0 <- gbm(type ~ . , data = trn, train.fraction = 1, interaction.depth=4, shrinkage=.05,  n.trees=2500, bag.fraction=0.5, cv.folds=5, distribution="bernoulli")
+
+gbm0.pred <- predict(gbm0, tst, type="response", n.trees=300)
+df <- cbind(as.data.frame(gbm0.pred), tst$type)
+df <- df %>% mutate(pred = ifelse(gbm0.pred >= .5, 1, 0), equ = pred == tst$type)
+gbm0.tst.mc <- (1534 - sum(df$equ))/1534
+
+df_spam <- df %>% filter(tst$type == 1)
+gbm0.spam.mc <- (618 - sum(df_spam$equ))/618
+
+df_not <- df %>% filter(tst$type == 0)
+gbm0.not.mc <- (916 - sum(df_not$equ))/916
+
+rm(df, df_spam, df_not)
+
+wvec <- trn %>% mutate(wght = ifelse(type == 0, .99, .01)) %>% .$wght
+
+gbm1 <- gbm(type ~ . , data = trn, train.fraction = 1, interaction.depth=4, shrinkage=.03,  n.trees=2500, bag.fraction=0.5, cv.folds=5, distribution="bernoulli", weights = wvec)
+
+gbm1.pred <- predict(gbm1, tst, type="response", n.trees=300)
+
+df <- cbind(as.data.frame(gbm1.pred), tst$type)
+df <- df %>% mutate(pred = ifelse(gbm1.pred >= .5, 1, 0), equ = pred == tst$type)
+gbm1.tst.mc <- (1534 - sum(df$equ))/1534
+
+df_spam <- df %>% filter(tst$type == 1)
+gbm1.spam.mc <- (618 - sum(df_spam$equ))/618
+
+df_not <- df %>% filter(tst$type == 0)
+gbm1.not.mc <- (916 - sum(df_not$equ))/916
+gbm1.not.mc
+
+summary(gbm0,main="Relative Influence for all Predictors")
+best.iter<-gbm.perf(gbm0,method="OOB")
+
+plot(x=gbm0,i.var=52,n.trees=best.iter, main="Partial Dependence of !") 
+plot(x=gbm0,i.var=53,n.trees=best.iter, main="Partial Dependence of $") 
+plot(x=gbm0,i.var=7,n.trees=best.iter, main="Partial Dependence of remove") 
+
+```
