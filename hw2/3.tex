@@ -96,7 +96,7 @@ Now we consider the penalty function for $\gamma \ge 1$:
 %------------------------------line 3-------------------------------------------
 \text{So, } \frac{\partial}{\partial a_{k}} \sum_{j = 1}^{n} |a_{j}|^{\gamma} = 
 \frac{\partial}{\partial a_{k}} |a_{k}|^{\gamma} = 
-\gamma a_{k}^{\gamma - 1} \frac{\partial |a_{k}|}{\partial a_{k}} 
+\gamma |a_{k}|^{\gamma - 1} \frac{\partial |a_{k}|}{\partial a_{k}} 
 \text{, where } \frac{\partial |a_{k}|}{\partial a_{k}} 
 \text{ is the subgradient and } 
 \frac{\partial |a_{k}|}{\partial a_{k}} \in [-1, 1]\\
@@ -113,14 +113,15 @@ Note that the above holds for $\gamma = 1$. Finally, together we have:
 \begin{gather*}
 \frac{\partial}{\partial a_{k}} [\hat{R}(a) + \lambda P_{\gamma}(a)] = 
 \frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
-\gamma a_{k}^{\gamma - 1} \frac{\partial |a_{k}|}{a_{k}}
+\gamma \lambda |a_{k}|^{\gamma - 1} \frac{\partial |a_{k}|}{a_{k}}
 \end{gather*}
 
 \vspace{5mm}
 \noindent
 To find the minimum, we would need to set the above equal to zero and find the 
 values of $a$ that satisfy the equality. Now, let's assume that $\gamma > 1$. 
-We will show by contradiction that values of $a$ are not forced to zero. Assume that some $a_{k} = 0$, then:
+We will show by contradiction that values of $a$ are not forced to zero. Assume 
+that some $a_{k} = 0$, then:
 
 %-------------------------------------------------------------------------------
 %---------------------------Proof by Contradiction------------------------------
@@ -128,9 +129,9 @@ We will show by contradiction that values of $a$ are not forced to zero. Assume 
 \begin{gather*}
 %------------------------------line 1-------------------------------------------
 \frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
-\gamma a_{k}^{\gamma - 1} \frac{\partial |a_{k}|}{a_{k}} = 
+\gamma |a_{k}|^{\gamma - 1} \frac{\partial |a_{k}|}{a_{k}} = 
 \frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
-\gamma \times 0^{\gamma - 1} \times \frac{\partial |a_{k}|}{a_{k}} = 
+\gamma \lambda \times 0^{\gamma - 1} \times \frac{\partial |a_{k}|}{a_{k}} = 
 %------------------------------line 2-------------------------------------------
 \frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik}\\
 \text{Then } 
@@ -157,7 +158,7 @@ penalty. Assume $\gamma = 1$.
 \begin{gather*}
 %------------------------------line 1-------------------------------------------
 \frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
-\gamma a_{k}^{\gamma - 1} \frac{\partial |a_{k}|}{a_{k}} = 
+\gamma \lambda |a_{k}|^{\gamma - 1} \frac{\partial |a_{k}|}{a_{k}} = 
 \frac{1}{N} \sum_{i = 1}^{N} \frac{\partial L}{\partial f} x_{ik} + 
 \lambda \frac{\partial |a_{k}|}{a_{k}}\\
 %------------------------------line 2-------------------------------------------
