@@ -38,46 +38,46 @@
 
 \section*{Problem 5}
 
-\vspace{5 mm}
+\vspace{1 mm}
 \noindent
-Given our additive function $F(x) = F_{l}(z_{l}) + F_{\backslash l}(z_{\backslash l})$
- on our subsets, we can represent the partial dependence of $F(x)$ on $z_{l}$ as
-  $E_{z_{\backslash l}}(F(z_{l}, z_{\backslash l}))$ which we can approximate with 
-  $\frac{1}{N} \sum\limits_{i=1}^N F(z_{l}, z_{i\backslash l})$ where $N$ is the
-   number of elements in $z_{\backslash l}$.  This is from Elements of Statistical
-    Learning 10.47 and 10.48 (pg. 369).  
+Taking the expectation of our additive function, we have:
 
-\noindent
-Now we can substitute in our additive function, getting 
-$\frac{1}{N} \sum\limits_{i=1}^N F_{l}(z_{l}) + F_{\backslash l}(z_{i\backslash l})$  
-
-\noindent
-From this we can split the summation: 
-$\frac{1}{N} \sum\limits_{i=1}^N F_{l}(z_{l}) + \frac{1}{N} \sum\limits_{i=1}^N 
-F_{\backslash l}(z_{i\backslash l})$ 
-
-\noindent
-Because $F_{l}(z_{l})$ doesn't depend on i, we arrive at $F_{l}(z_{l}) + \frac{1}{N}
- \sum\limits_{i=1}^N F_{\backslash l}(z_{i\backslash l})$ which is $F_{l}(z_{l})$ 
- plus an additive constant, as desired.
+\begin{gather*}
+E_{z_{\backslash l}}[F(z_{l}, z_{\backslash l})] = 
+E_{z_{\backslash l}}[F(z_{l}) + F(z_{\backslash l})] = 
+E_{z_{\backslash l}}[F(z_{l})] + E_{z_{\backslash l}}[F(z_{\backslash l})]\\
+\text{Note that } E_{z_{\backslash l}}[F(z_{\backslash l})] 
+\text{evaluates to a constant}\\
+\text{Also, } E_{z_{\backslash l}}[F(z_{l})] = F(z_{l})\\
+\text{because we are taking an expectation with respect to a variable not present in the function}\\
+\text{So we have } 
+E_{z_{\backslash l}}[F(z_{l})] + E_{z_{\backslash l}}[F(z_{\backslash l})] = 
+F(z_{l}) + constant
+\end{gather*}
 
 \vspace{5 mm}
 \noindent
-Now considering the dependence ignoring the additional variables $z_{\backslash l}$, 
-we have $E[F(x)|z_{l}]$. If we assume some density functions $p_{z_{l}}$ and
- $p_{z_{\backslash l}}$, we can then say $E[F(x)|z_{l}] = \int p_{z_{l}}F_{l}(z_{l})
- d_{z_{l}} + \int p_{z_{\backslash l}}F_{\backslash l}(z_{\backslash l})d_{z_{\backslash l}}$
- using the additive property of $F(x)$.  Now we know that this is all given $z_{l}$, so 
- the first term $\int p_{z_{l}}F_{l}(z_{l})d_{z_{l}}$ will simply evaluate to some number,
- but the second term $\int p_{z_{\backslash l}}F_{\backslash l}(z_{\backslash l})
- d_{z_{\backslash l}}$ will be some function not dependent on $z_{l}$. Therefore our
-  dependence ignoring the additional variables $z_{\backslash l}$ will not always 
-  be $F_{l}(z_{l})$ plus an additive constant.
+So we have shown that this expectation evaluates to a function of $F(z_{l})$ 
+up to an additive constant. Now we will show what $E[F(x)|z_{l}]$ evaluates to:
+
+
+\begin{gather*}
+E_{x|z_{l}}[F(x)|z_{l}] = E_{x|z_{l}}[[F(z_{l}) + F(z_{\backslash l})]|z_{l}] = 
+E_{x|z_{l}}[F(z_{l})|z_{l}] + E_{x|z_{l}}[F(z_{\backslash l})|z_{l}]\\
+\text{Note } E_{x|z_{l}}[F(z_{l})|z_{l}] = F(z_{l}) \text{ and } 
+E_{x|z_{l}}[F(z_{\backslash l})|z_{l}] \text{ is a function of } z_{\backslash l}\\
+\text{If } z_{l} \text{ and } z_{\backslash l} \text{ are independent, then }
+E_{x|z_{l}}[F(z_{\backslash l})|z_{l}] = E_{x|z_{l}}[F(z_{\backslash l})]\\
+\text{Then in general, } E_{x|z_{l}}[F(x)|z_{l}] = 
+F(z_{l}) + E_{x|z_{l}}[F(z_{\backslash l})|z_{l}] = F(z_{l}) + E_{z_{\backslash l}}[F(z_{\backslash l})]\\
+\text{However, if } z_{l} \text{ and } z_{\backslash l} \text{ are independent:}\\
+E_{x|z_{l}}[F(x)|z_{l}] = F(z_{l}) + constant
+\end{gather*}
 
 \vspace{5 mm}
 \noindent
- The partial dependence of $F(x)$ on $z_{l}$ and the partial dependence of $F(x)$ on 
- $z_{l}$ ignoring the additional variables $z_{\backslash l}$ will be equivalent
-  when the two subsets $z_{l}$ and $z_{\backslash l}$ are independent.
+Thus the dependence of $F(x)$ on $z_{l}$ ignoring the other variables 
+($z_{\backslash l}$) will be the same as the partial dependence of $F(x)$ on 
+$z_{l}$ when the two are independent.
 
 \end{document}
