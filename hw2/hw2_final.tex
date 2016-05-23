@@ -1,0 +1,131 @@
+\documentclass[11pt]{article}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{enumerate}
+\usepackage{mdframed}
+\usepackage{mathrsfs}
+
+
+\begin{document}
+\begin{center}
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 1-------------------------------------
+%-------------------------------------------------------------------------------
+
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 2, Due 5/22/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 1}
+
+\vspace{5 mm}
+\noindent
+The advantage of random variable selection strategy in random forests is that
+we reduce the possibility of generating highly correlated bagged trees. Highly
+correlated trees lead to low prediction accuracy. By only considering a subset 
+of split variables, we force ourselves to split differently at each tree. This 
+enhances prediction because if we split on all variables we tend to still split
+on the same best variables, so there is little randomness and averaging the 
+prediction value won't give us much of a different answer from just making
+one tree. The random variable selection strategy works best if the there are 
+very few interactions among the features. Another advantage of the method is 
+the increased computational efficiency due to less feature exploration. 
+
+\vspace{5 mm}
+\noindent
+The major disadvantage of random variable selection strategy is not being able 
+to capture the interaction effects among the features in most of the bagged 
+trees. An interaction between two variables is said to have been captured if 
+they are on the samebranch of the generated tree. These interactions are not 
+necessarily captured due to random variable selection for the split. Also, one 
+does not have the liberty to split on the best feature due to the previous 
+constraint. This leads to increasein the bias of the trees generated on average 
+and may lead to decrease in prediction accuracy when many trees with low 
+predictive power are averaged.
+
+\vspace{5 mm}
+\noindent
+An alternate startegy to random variable selection in the random forests is to 
+randomly change the size of bootstrap sample and allow all variables to be 
+split at each node. This strategy introduces variation in the trees due to 
+sampling and ensures capturing interaction effects among the features. 
+
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 2-------------------------------------
+%-------------------------------------------------------------------------------
+\begin{center}
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 2, Due 5/22/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 2}
+
+\vspace{5 mm}
+\noindent
+Linear regression uses least squares as the error function. When the number of 
+predictors is greater than the number of observations in the training data, we 
+have multiple perfect fits for the model and therefore, infinite solutions for 
+the coefficient estimates of the least squares. Thus, the model would have a 
+huge variance.
+
+\vspace{5 mm}
+\noindent
+Regularization is necessary to find the unique coefficient estimates when the 
+number of observations is less than the number of predictors. If there is high 
+collinearity/correlation among the predictors in the model, then a 
+regularization such as ridge penalty reduces the variation in coefficient 
+estimates of the variables. Another case where regularization helps is when 
+there exist multiple noisy variables in the data. In such a case, 
+regularization such as a lasso penalty ensures that the coefficients of noisy 
+variables are zero.
+
+\vspace{5 mm}
+\noindent
+Regularization is disadvantageous when the number of predictors is extremely 
+small and predictors are believed to be  independent. In this case, we may want 
+to pursue feature augmentation by incorporating the higher orders and 
+interaction among parameters. But the idea of regularization goes against 
+feature augmentation. Another example where regularization fails is when we 
+have a perfect line/plane that fits the model for linear regression. Generally, 
+regularization fails when the bias introduced by it does not lead to drastic 
+decrease in the variance of prediction. 
+
+\vspace{5 mm}
+\noindent
+During boosting, we generate a linear combination of all possible trees. In 
+this situation sparsity is assumed because out of all possible trees there are 
+only a few trees that capture the signal in the data. 
+
+\vspace{5 mm}
+\noindent
+Most of the trees generated in boosting do not influence the outcome variable. 
+If we assume sparsity and it exists then our predictions are good; otherwise, 
+our predictions are inaccurate. However, if we do not assume sparsity and 
+our variable space is larger than our sample space we are stuck. We simply do 
+not have enough data to estimate a large number of parameters (all possible 
+trees in the boosting context). Hence, the assumption of sparsity is always 
+reasonable in boosting.
+
+%-------------------------------------------------------------------------------
+%---------------------------------Problem 3-------------------------------------
+%-------------------------------------------------------------------------------
+
+\end{document}
