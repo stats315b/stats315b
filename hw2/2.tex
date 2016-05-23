@@ -34,30 +34,47 @@
 
 \vspace{5 mm}
 \noindent
-Linear regression uses least squares as the error function. When the number of predictors is
-greater than the number of observations in the training data, we have multiple perfect fits for the
-model and therefore, infinite solutions for the coefficient estimates of the least squares. Thus, the model
-would have a huge variance.
+Linear regression uses least squares as the error function. When the number of 
+predictors is greater than the number of observations in the training data, we 
+have multiple perfect fits for the model and therefore, infinite solutions for 
+the coefficient estimates of the least squares. Thus, the model would have a 
+huge variance.
 
-Regularization is necessary to find the unique coefficient estimates when the number of observations
-is less than the number of predictors. If there is high collinearity/correlation among the predictors in the model,
-then a regularisation such as ridge penalty reduces the variation in coefficient estimates of the variables.
-Another case where regularisation helps is when there exist multiple noisy variables in the data. In such a case, 
-regularization such as a lasso penalty ensures that the coefficients of noisy variables are zero.
+\vspace{5 mm}
+\noindent
+Regularization is necessary to find the unique coefficient estimates when the 
+number of observations is less than the number of predictors. If there is high 
+collinearity/correlation among the predictors in the model, then a 
+regularization such as ridge penalty reduces the variation in coefficient 
+estimates of the variables. Another case where regularization helps is when 
+there exist multiple noisy variables in the data. In such a case, 
+regularization such as a lasso penalty ensures that the coefficients of noisy 
+variables are zero.
 
-Regularization is disadvantageous when the number of predictors is extremely small and predictors are
-believed to be  independent. In this case, we may want to pursue feature augmentation by 
-incorporating the higher orders and interaction among parameters. But the idea of regularisation
-goes against feature augmentation. Another example where regularization fails is when we have
-a perfect line/plane that fits the model. Generally, regularization fails when the bias introduced
-by it does not lead to drastic decrease in the variance of prediction. 
+\vspace{5 mm}
+\noindent
+Regularization is disadvantageous when the number of predictors is extremely 
+small and predictors are believed to be  independent. In this case, we may want 
+to pursue feature augmentation by incorporating the higher orders and 
+interaction among parameters. But the idea of regularization goes against 
+feature augmentation. Another example where regularization fails is when we 
+have a perfect line/plane that fits the model for linear regression. Generally, 
+regularization fails when the bias introduced by it does not lead to drastic 
+decrease in the variance of prediction. 
 
-During boosting, we generate a linear combination of all possible trees. In this situation sparsity is assumed 
-because out of all possible trees there are only a few trees that capture the signal in the data. 
+\vspace{5 mm}
+\noindent
+During boosting, we generate a linear combination of all possible trees. In 
+this situation sparsity is assumed because out of all possible trees there are 
+only a few trees that capture the signal in the data. 
 
-Most of the trees generated in boosting do not influence the outcome variable. If we assume sparsity and it exists 
-then our predictions are good else our predictions are inaccurate. However, if we do not assume sparsity and it does
-not exist even then our predictions are inaccurate.  Hence, the assumption of sparsity is always reasonable in boosting.
+\vspace{5 mm}
+\noindent
+Most of the trees generated in boosting do not influence the outcome variable. 
+If we assume sparsity and it exists then our predictions are good; otherwise, 
+our predictions are inaccurate. However, if we do not assume sparsity and it 
+does not exist even then our predictions are inaccurate.  Hence, the assumption 
+of sparsity is always reasonable in boosting.
 
 
 %We simply do not have enough data to estimate a large number of parameters (all possible trees in the boosting context). 
