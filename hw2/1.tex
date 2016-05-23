@@ -36,17 +36,23 @@
 \noindent
 The advantage of random variable selection strategy in random forests is that
 we reduce the possibility of generating highly correlated bagged trees. Highly
-correlated trees lead to low prediction accuracy. The random variable selection 
-strategy works best if the there are very few interactions among the features.
-Another advantage of the method is the increased computational efficiency due to
-less feature exploration. 
+correlated trees lead to low prediction accuracy. By only considering a subset 
+of split variables, we force ourselves to split differently at each tree. This 
+enhances prediction because if we split on all variables we tend to still split
+on the same best variables, so there is little randomness and averaging the 
+prediction value won't give us much of a different answer from just making
+one tree. The random variable selection strategy works best if the there are 
+very few interactions among the features. Another advantage of the method is 
+the increased computational efficiency due to less feature exploration. 
 
 The major disadvantage of random variable selection strategy is not being able to 
-capture the interaction effects among the features in most of the bagged trees. 
-Besides, one does not have the liberty to split on the best feature due to the constraint
-of random variable selection. This constraint leads to increase in the bias of the trees
-generated on average and may lead to decrease in prediction accuracy when many 
-trees with low predictive power are averaged.
+capture the interaction effects among the features in most of the bagged trees. An 
+interaction between two variables is said to have been captured if they are on the same
+branch of the generated tree. These interactions are not necessarily captured 
+due to random variable selection for the split. Also, one does not have the liberty 
+to split on the best feature due to the previous constraint. This leads to increase
+in the bias of the trees generated on average and may lead to decrease in 
+prediction accuracy when many trees with low predictive power are averaged.
 
 An alternate startegy to random variable selection in the random forests is to 
 randomly change the size of bootstrap sample and allow all variables to be split at 
