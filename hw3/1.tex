@@ -34,7 +34,74 @@
 
 \vspace{5 mm}
 \noindent
+For a multi-hidden layer problem, note that for our funcitonal form, We would 
+have a summation of several compositions (equal to the number of hidden layers 
+compositions) of our activation function. We will try to avoid differntiating 
+and writing this lengthy composition function becuase differentiating it and 
+expressing it directly will be difficult to do. Instead, we will abstract the 
+layers away by define a set of nodes each with directional weighted edges. We 
+will find that updating each of the edge's weights will only depend on the 
+edge going to and leaving that node. 
 
+\begin{itemize}
+\item $L = $ the number of hidden layers.
+\item $v_{i} = $ the $i$th vertex in our network. Let there be $n$ total 
+vertices.
+\item $S = $ our transfer function.
+\item $w_{ij} = $ the weight from node $i$ to node $j$. Refer to the set of all 
+weights as $w$.
+\item $w_{t} = $ our set of weights at iteration $t$.
+\item $in_{j} = \sum_{i: \exists \text{ edge } i \text{ to } j} w_{ij} out_{ij}$ 
+the weighted sum of all inputs coming into vertex $j$.
+\item $out_{ij} = S(in_{i})$ the output from $v_{i}$ that will be propogated 
+to $v_{j}$.
+\item $X = $ Our training data set. There are $n$ data points each with $p$ 
+features.
+\item $Y = $ Our responses to our training data. Again, there are $n$ of these.
+\item $F(X; w) = $ our model.
+\item $F_{t}(X; w_{t}) = \sum-$ our model at iteration $t$.
+\item $E_{t} = \frac{1}{2}(Y - F(X; w_{t}))^{2} $ Our total error at iteration 
+$t$. We square this because we are considering squared error loss. We apply the 
+$\frac{1}{2}$ for simplification when we apply a derivative. Scaling by a 
+constant should not affect our outcome.
+\end{itemize}
 
+\vspace{5 mm}
+\noindent
+When we compute each node's share of the error and thus it's update to the 
+weights, we have to first look at the nodes closest to the response/output 
+node, compute their share, and then propogate it backwards. This defines a 
+recurssive relationship: the nodes closest to the input layer needs to 
+recurssively solve their share of the error dependent on the nodes closer to 
+the output layer. We must then define our recurrsive base case (output layer) 
+and our recurrsive step. We will consider the base case first
+
+\vspace{5 mm}
+\noindent
+Our base case has direct access to our error at time $t$. Note that if we think 
+about our prediction node from its perspective, it does not need to know what 
+transpired in the hidden layers before the one directly connected to it. 
+Consider the following:
+
+\begin{gather*}
+%-------------------------------line 1------------------------------------------
+\text{We can rewrite our } E_{t} \text{ as } 
+\frac{1}{2}(Y - F(X; w_{t}))^{2} = 
+\frac{1}{2}(Y - in_{pred})^{2} 
+\text{ where } v_{pred} \text{is our prediction node}\\
+%-------------------------------line 2------------------------------------------
+\text{The error's gradient is then } 
+\frac{\partial}{\partial w_{i,pred}} E_{t} = 
+\frac{\partial E_{t}}{\partial out_{i, pred}} 
+\frac{\partial out_{i, pred}}{\partial w_{i,pred}}\\
+%-------------------------------line 3------------------------------------------
+\text{Consider } \frac{\partial E_{t}}{\partial out_{i, pred}} = 
+\frac{\partial}{\partial out_{i, pred}} \frac{1}{2}(Y - in_{pred})^{2} = 
+\frac{\partial}{\partial out_{i, pred}} 
+\frac{1}{2}(Y - \sum_{i: \exists \text{ edge } i \text{ to } pred} w_{ij} 
+out_{ij})^{2}\\
+%-------------------------------line 3------------------------------------------
+\text{Since }
+\end{gather*}
 
 \end{document}
