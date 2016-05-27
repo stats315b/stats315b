@@ -87,19 +87,16 @@ Consider the following:
 %-------------------------------line 1------------------------------------------
 \text{We can rewrite our } E_{t} \text{ as } 
 \frac{1}{2}(Y - F(X; w_{t}))^{2} = 
-\frac{1}{2}(Y - in_{pred})^{2} 
-\text{ where } v_{pred} \text{is our prediction node}\\
+\frac{1}{2}(Y - in_{pred})^{2} = 
+\frac{1}{2}(Y - 
+\sum_{i: \exists \text{ edge } i \text{ to } pred} w_{i,pred} out_{i,pred})
+\text{ where } pred \text{ is our prediction node}\\
 %-------------------------------line 2------------------------------------------
 \text{The error's gradient is then } 
 \frac{\partial}{\partial w_{i,pred}} E_{t} = 
-\frac{\partial E_{t}}{\partial out_{i, pred}} 
-\frac{\partial out_{i, pred}}{\partial w_{i,pred}}\\
+\frac{\partial}{\partial w_{i,pred}} \frac{1}{2}(Y - F(X; w_{t}))^{2}\\
 %-------------------------------line 3------------------------------------------
-\text{Consider } \frac{\partial E_{t}}{\partial out_{i, pred}} = 
-\frac{\partial}{\partial out_{i, pred}} \frac{1}{2}(Y - in_{pred})^{2} = 
-\frac{\partial}{\partial out_{i, pred}} 
-\frac{1}{2}(Y - \sum_{i: \exists \text{ edge } i \text{ to } pred} w_{ij} 
-out_{ij})^{2}\\
+\text{n}
 %-------------------------------line 3------------------------------------------
 \text{Since }
 \end{gather*}
