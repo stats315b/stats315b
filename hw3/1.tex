@@ -61,29 +61,9 @@ input for node $j$ in layer $l$.
 $t$. We square this because we are considering squared error loss. We apply the 
 $\frac{1}{2}$ for simplification when we apply a derivative. Scaling by a 
 constant should not affect our outcome.
-\end{itemize}
-
-\begin{itemize}
-\item $L = $ the number of hidden layers.
-\item $v_{i} = $ the $i$th vertex in our network. Let there be $n$ total 
-vertices.
-\item $S = $ our transfer function.
-\item $w_{ij} = $ the weight from node $i$ to node $j$. Refer to the set of all 
-weights as $w$.
-\item $w_{t} = $ our set of weights at iteration $t$.
-\item $in_{j} = \sum_{i: \exists \text{ edge } i \text{ to } j} w_{ij} out_{ij}$ 
-the weighted sum of all inputs coming into vertex $j$.
-\item $out_{ij} = S(in_{i})$ the output from $v_{i}$ that will be propogated 
-to $v_{j}$.
-\item $X = $ Our training data set. There are $n$ data points each with $p$ 
-features.
-\item $Y = $ Our responses to our training data. Again, there are $n$ of these.
-\item $F(X; w) = $ our model.
-\item $F_{t}(X; w_{t}) = \sum-$ our model at iteration $t$.
-\item $E_{t} = \frac{1}{2}(Y - F(X; w_{t}))^{2} $ Our total error at iteration 
-$t$. We square this because we are considering squared error loss. We apply the 
-$\frac{1}{2}$ for simplification when we apply a derivative. Scaling by a 
-constant should not affect our outcome.
+\item $in_{j}^{l} = \sum_{k = 1}^{I_{l}} w_{kj}^{l} o_{k}^{l - 1} $ = the 
+weighted input to node $j$ in layer $l$. By definition, 
+$o_{j}^{l} = S(in_{j}^{l})$
 \end{itemize}
 
 \vspace{5 mm}
@@ -100,20 +80,59 @@ and our recurrsive step. We will consider the base case first
 \noindent
 \textbf{Case - Weight Updates to Prediction Node}
 
+\vspace{5 mm}
+\noindent
+If we are at the prediction node, then our predicted value is the output of 
+that node. That is, $F(x, w) = o_{pred}^{L} = S(in_{pred}^{L})$. Then our 
+derivation is as follows:
+
 \begin{gather*}
 %-------------------------------line 1------------------------------------------
 \frac{\partial E_{t}}{\partial w_{kj}^{L}} = 
-\frac{\partial}{\partial w_{kj}^{L}}
-\frac{1}{2}(Y - F(x, w_{t}))^{2} = 
-\frac{\partial}{\partial w_{kj}^{L}} 
-\frac{1}{2}(Y - \sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L})^{2}\\
+\frac{\partial E_{t}}{\partial in_{pred}^{L}} 
+\frac{\partial in_{pred}^{L}}{\partial w_{kj}^{L}}
+\text{, by the chain rule}\\
 %-------------------------------line 2------------------------------------------
-\text{Note, by chain rule } 
+\frac{\partial E_{t}}{\partial in_{pred}^{L}} = 
+\frac{\partial}{\partial in_{pred}^{L}} \frac{1}{2} (Y - F(x, w_{t}))^{2} = 
+\frac{\partial}{\partial in_{pred}^{L}} \frac{1}{2} (Y - S(in_{pred}^{L})^{2} = 
+- (Y - S(in_{pred}^{L})) S'(in_{pred}^{L})\\
+%-------------------------------line 3------------------------------------------
+\text{If we use our definition of } S \text{, } S' = S (1 - S) \text{, so } 
+- (Y - S(in_{pred}^{L})) S'(in_{pred}^{L}) = \\
+%-------------------------------line 4------------------------------------------
+= - (Y - S(in_{pred}^{L})) S(in_{pred}^{L}) (1 - S(in_{pred}^{L}))\\
+%-------------------------------line 5------------------------------------------
+\frac{\partial in_{pred}^{L}}{\partial w_{kj}^{L}} = 
 \frac{\partial}{\partial w_{kj}^{L}} 
-\frac{1}{2}(Y - \sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L})^{2} = 
-(Y - \sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L}) o_{k}^{L} = 
-(Y - F(x, w)) o_{k}^{L}
+\sum_{i = 1}^{I_{L}} w_{ij}^{L} o_{i}^{L - 1}\\
+%-------------------------------line 6------------------------------------------
+\text{The only term depending on } w_{kj}^{L} \text{ is } o_{k}^{L - 1} 
+\text{, so } 
+\frac{\partial}{\partial w_{kj}^{L}} 
+\sum_{i = 1}^{I_{L}} w_{ij}^{L} o_{i}^{L - 1} = 
+o_{k}^{L - 1}\\
+%-------------------------------line 7------------------------------------------
+\text{In total } 
+\frac{\partial E_{t}}{\partial w_{kj}^{L}} = 
+\frac{\partial E_{t}}{\partial in_{pred}^{L}} 
+\frac{\partial in_{pred}^{L}}{\partial w_{kj}^{L}} = 
+- (Y - S(in_{pred}^{L})) S(in_{pred}^{L}) (1 - S(in_{pred}^{L})) o_{k}^{L - 1}\\
+%-------------------------------line 8------------------------------------------
+\text{Gradient Descent tells us we want to update } w_{kj} \text{ with } 
+- \eta \frac{\partial E}{\partial w_{kj}}\\
+%-------------------------------line 9------------------------------------------
+\text{So, } w_{kj}^{t} = w_{kj}^{t - 1} + 
+\eta (Y - S(in_{pred}^{L})) S(in_{pred}^{L}) (1 - S(in_{pred}^{L})) o_{k}^{L - 1} 
+\text{ if } w_{kj} \text{ leads to an output node.}
 \end{gather*}
+
+\vspace{5 mm}
+\noindent
+Note that in the above equation, after our forward propogation to reach a 
+prediction, we have estimates for each parameter in the update for the 
+prediction node, so we can compute this update directly. This will be our 
+base case in our recurssive algorithm.
 
 \vspace{5 mm}
 \noindent
@@ -134,7 +153,7 @@ and our recurrsive step. We will consider the base case first
 \text{Also note } o_{j}^{L} = S(z_{j}^{L - 1}) 
 \text{, so } 
 \frac{\partial}{\partial z_{j}^{L - 1}} 
-\sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L}  
+\sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L} 
 \end{gather*}
 
 
