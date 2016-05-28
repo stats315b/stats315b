@@ -44,6 +44,26 @@ will find that updating each of the edge's weights will only depend on the
 edge going to and leaving that node. 
 
 \begin{itemize}
+\item $w_{ij}^{l} = $ weight from node $i$ in level $(l - 1)$ to node $j$ in 
+level $l$.
+\item $I_{j}^{l} = $ number of inputs to node $j$ of the $l$th layer = 
+the number of units of the previous layer.
+\item $o_{i}^{l - 1} = $ the $i$th output from layer $(l -1)$ from the $i$th 
+node.
+\item $o_{j}^{l} = \frac{1}{1 + exp(-\sum_{i = 0}^{I_{j}^{l}} 
+w_{ij}^{l} o_{i}^{l - 1})}$
+\item $S = $ our transfer function, which we will take as $S(z) = 
+\frac{1}{1 + exp(-z)}$. Note $\frac{\partial S}{\partial z} = S(z)(1 - S(z))$
+\item $z_{j}^{l} = \sum_{i = 0}^{I_{l}} w_{ij}^{l} o_{i}^{l}$ weighted sum of 
+input for node $j$ in layer $l$.
+\item $F(x, w) = $ our model $ = \sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L}$
+\item $E_{t} = \frac{1}{2}(Y - F(x, w_{t}))^{2} $ Our total error at iteration 
+$t$. We square this because we are considering squared error loss. We apply the 
+$\frac{1}{2}$ for simplification when we apply a derivative. Scaling by a 
+constant should not affect our outcome.
+\end{itemize}
+
+\begin{itemize}
 \item $L = $ the number of hidden layers.
 \item $v_{i} = $ the $i$th vertex in our network. Let there be $n$ total 
 vertices.
@@ -78,27 +98,67 @@ and our recurrsive step. We will consider the base case first
 
 \vspace{5 mm}
 \noindent
-Our base case has direct access to our error at time $t$. Note that if we think 
-about our prediction node from its perspective, it does not need to know what 
-transpired in the hidden layers before the one directly connected to it. 
-Consider the following:
+\textbf{Case - Weight Updates to Prediction Node}
+
+\begin{gather*}
+%-------------------------------line 1------------------------------------------
+\frac{\partial E_{t}}{\partial w_{kj}^{L}} = 
+\frac{\partial}{\partial w_{kj}^{L}}
+\frac{1}{2}(Y - F(x, w_{t}))^{2} = 
+\frac{\partial}{\partial w_{kj}^{L}} 
+\frac{1}{2}(Y - \sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L})^{2}\\
+%-------------------------------line 2------------------------------------------
+\text{Note, by chain rule } 
+\frac{\partial}{\partial w_{kj}^{L}} 
+\frac{1}{2}(Y - \sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L})^{2} = 
+(Y - \sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L}) o_{k}^{L} = 
+(Y - F(x, w)) o_{k}^{L}
+\end{gather*}
+
+\vspace{5 mm}
+\noindent
+\textbf{Case - Weight Updates Layer Before Prediction Layer}
+
+\begin{gather*}
+%-------------------------------line 1------------------------------------------
+\frac{\partial E_{t}}{\partial w_{kj}^{L - 1}} = 
+\frac{\partial E_{t}}{\partial z_{j}^{L - 1}} 
+\frac{\partial z_{j}^{L - 1}}{\partial w_{kj}^{L - 1}}
+\text{, by the chain rule}\\
+%-------------------------------line 2------------------------------------------
+\frac{\partial E_{t}}{\partial z_{j}^{L - 1}} = 
+\frac{\partial}{\partial o_{j}^{L - 1}} \frac{1}{2}(Y - F(x, w_{t}))^{2}\\
+%-------------------------------line 3------------------------------------------
+\text{Note that } F(x, w_{t}) = \sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L}\\
+%-------------------------------line 4------------------------------------------
+\text{Also note } o_{j}^{L} = S(z_{j}^{L - 1}) 
+\text{, so } 
+\frac{\partial}{\partial z_{j}^{L - 1}} 
+\sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L}  
+\end{gather*}
+
+
 
 \begin{gather*}
 %-------------------------------line 1------------------------------------------
 \text{We can rewrite our } E_{t} \text{ as } 
 \frac{1}{2}(Y - F(X; w_{t}))^{2} = 
-\frac{1}{2}(Y - in_{pred})^{2} = 
-\frac{1}{2}(Y - 
-\sum_{i: \exists \text{ edge } i \text{ to } pred} w_{i,pred} out_{i,pred})
-\text{ where } pred \text{ is our prediction node}\\
+\frac{1}{2}(Y - in_{pred})^{2} = \\
 %-------------------------------line 2------------------------------------------
-\text{The error's gradient is then } 
-\frac{\partial}{\partial w_{i,pred}} E_{t} = 
-\frac{\partial}{\partial w_{i,pred}} \frac{1}{2}(Y - F(X; w_{t}))^{2}\\
+= \frac{1}{2}(Y - 
+\sum_{k: \exists \text{ edge } k \text{ to } pred} w_{k,pred} out_{k,pred})^{2}
+\text{ where } pred \text{ is our prediction node}\\
 %-------------------------------line 3------------------------------------------
-\text{n}
-%-------------------------------line 3------------------------------------------
-\text{Since }
+\text{Since we are only concerned with outer edges, need gradients for } 
+w_{i, pred}\\
+%-------------------------------line 4------------------------------------------
+\text{Note } \frac{\partial}{\partial w_{i,pred}}
+\sum_{k: \exists \text{ edge } k \text{ to } pred} w_{k,pred} out_{k,pred} = 
+out_{i, pred}\\
+%-------------------------------line 5------------------------------------------
+\text{So } \frac{\partial}{\partial w_{i,pred}} E_{t} = 
+(Y - \sum_{k: \exists \text{ edge } k \text{ to } pred} w_{k,pred} out_{k,pred})
+out_{i, pred}
 \end{gather*}
 
 \end{document}
