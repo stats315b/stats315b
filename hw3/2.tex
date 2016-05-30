@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{enumerate}
+\usepackage{mdframed}
+\usepackage{mathrsfs}
+
+
+\begin{document}
+\begin{center}
+%---------------------------------------------------------------------------------------
+%---------------------------------Header------------------------------------------------
+%---------------------------------------------------------------------------------------
+
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 3, Due 6/03/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 1}
+
+\vspace{5 mm}
+\noindent
+ Consider a radial basis function network with spherical Gaussian basis of the form
+ 
+ $$B(\underline{x}|\mu_m, \sigma_m) = exp\bigg[-\frac{1}{2\sigma_m^2}\sum_{i = 1}^{n}(x_i-\mu_{im})^2\bigg]$$
+ 
+ With the function approximation given by 
+ 
+ $$\hat{F}(\underline{x},\underline{\omega}) = a_0 + \sum_{m=1}^{M}a_mB(\underline{x}|\mu_m, \sigma_m)$$
+ 
+ \begin{center}
+ where $\underline{\omega}$ is all of the parameters in the model
+ \end{center}
+ 
+ Consider the residual from one observation in order to derive the gradient
+ 
+ $$q(\underline{x},\underline{\omega}) = \frac{1}{2} \bigg[ y - \hat{F}(\underline{x},\underline{\omega})\bigg]^2$$
+ 
+ We want to derive the gradient of the network. 
+ 
+ \begin{equation}
+ G(x) = -g_k(\underline{x}, \underline{w}) = - \frac{\partial q(\underline{x}, \underline{\omega})}{\partial\omega_k} = \bigg(- \frac{\partial q(\underline{x}, \underline{\omega})}{\partial a_m}, - \frac{\partial q(\underline{x}, \underline{\omega})}{\partial \sigma_m}, - \frac{\partial q(\underline{x}, \underline{\omega})}{\partial \mu_{im}}\bigg)
+ \end{equation}
+ 
+ \begin{equation}
+ - \frac{\partial q(\underline{x}, \underline{\omega})}{\partial a_m} = \Big(y - \hat{F}(\underline{x}, \underline{\omega}) \Big)B(\underline{x}|\mu_m, \sigma_m) 
+ \end{equation}
+ 
+
+\begin{equation}
+\begin{split}
+ - \frac{\partial q(\underline{x}, \underline{\omega})}{\partial \sigma_m} & = \Big(y - \hat{F}(\underline{x}, \underline{\omega}) \Big) a_m B(\underline{x}|\mu_m, \sigma_m) \frac{1}{\sigma_m^3} \sum_{i = 1}^{n}(x_i - \mu_{im})^2\\ & = -\Big(y - \hat{F}(\underline{x}, \underline{\omega}) \Big) a_m B(\underline{x}|\mu_m, \sigma_m) \frac{2}{\sigma_m} ln \bigg[B(\underline{x}|\mu_m, \sigma_m) \bigg]
+ \end{split}
+ \end{equation}
+ 
+ \begin{equation}
+ - \frac{\partial q(\underline{x}, \underline{\omega})}{\partial \mu_{im}} = \Big(y - \hat{F}(\underline{x}, \underline{\omega}) \Big) a_m B(\underline{x}|\mu_m, \sigma_m) \frac{1}{\sigma_m^2}(x_i - \mu_{im})
+ \end{equation}
+
+
+\vspace{5 mm}
+\noindent
+
+
+\end{document}
