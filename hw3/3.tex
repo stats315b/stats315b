@@ -41,12 +41,13 @@ The given radial basis function with elliptically symmetric Gaussian basis is
 $B(\mathbf{x}|\mu_m,\boldsymbol \Sigma)$ 
 = \text{exp} $\bigg[  -\dfrac{1}{2}(\mathbf{x} - 
 \mu_{m} )^t\boldsymbol \Sigma (\mathbf{x} - \mu_{m} )    \bigg]$
+\text ({where $\mathbf{x}, \mu_{m}  \in \mathcal{R}^n$ and $\boldsymbol \Sigma \in  \mathcal{R}^{n \times n}$)}
 
 =\text{exp} $\bigg[  -\dfrac{1}{2}(\mathbf{x} - 
 \mu_{m} )^t\mathbf {R^tR} (\mathbf{x} - \mu_{m} )    \bigg]$
 
-\text{(where $\mathbf{R}$ is an upper triangular matrix obtained from Cholesky
-factorization of positive definite matrix $\boldsymbol \Sigma $)}
+\text{(where $\mathbf {R} \in  \mathcal{R}^{n \times n}$ is an upper triangular matrix obtained from} \\
+\text {Cholesky factorization of positive definite matrix $\boldsymbol \Sigma $)}
 
 = \text{exp} $\bigg[  -\dfrac{1}{2}\bigg(\mathbf {R}(\mathbf{x} - 
 \mu_{m} )\bigg)^t \bigg(\mathbf {R}(\mathbf{x} - \mu_{m}) \bigg)    \bigg]$ 
