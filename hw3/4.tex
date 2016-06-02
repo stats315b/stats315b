@@ -1,0 +1,71 @@
+\documentclass[11pt]{article}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{enumerate}
+\usepackage{mdframed}
+\usepackage{mathrsfs}
+\usepackage{relsize}
+
+
+\begin{document}
+\begin{center}
+%-------------------------------------------------------------------------------
+%---------------------------------Header----------------------------------------
+%-------------------------------------------------------------------------------
+
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 3, Due 6/3/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 4}
+
+\vspace{5 mm}
+\noindent
+
+The given radial basis function with elliptically symmetric Gaussian basis is
+
+$B(\mathbf{x}|\mu_m,\boldsymbol \Sigma_m)$ 
+= \text{exp} $\bigg[  -\dfrac{1}{2}(\mathbf{x} - 
+\mu_{m} )^t\boldsymbol \Sigma_m (\mathbf{x} - \mu_{m} )    \bigg]$
+\text ({where $\mathbf{x}, \mu_{m}  \in \mathcal{R}^n$ and $\boldsymbol \Sigma_m \in  \mathcal{R}^{n \times n}$)}
+
+=\text{exp} $\bigg[  -\dfrac{1}{2}(\mathbf{x} - 
+\mu_{m} )^t\mathbf {U_mD_mV_m^t} (\mathbf{x} - \mu_{m} )    \bigg]$
+
+\text{(where $\mathbf {U_mD_mV_m^t} \in  \mathcal{R}^{n \times n}$ is the Singular Value Decomposition
+of $\boldsymbol \Sigma_m $)}
+
+\vspace{5 mm}
+\noindent 
+The given radial basis function would vary in one direction when $\boldsymbol \Sigma_m $ is rank one matrix 
+i.e. it has only one singular value. 
+In this case, Singular Value Decomposition of $\boldsymbol \Sigma_m $ is an outer product $\sigma_1uv^t$. 
+
+Thus the radial basis function becomes 
+
+$B(\mathbf{x}|\mu_m,\boldsymbol \Sigma_m)$ 
+= \text{exp} $\bigg[  -\dfrac{1}{2}(\mathbf{x} - 
+\mu_{m} )^t\sigma_mu_mv_m^t (\mathbf{x} - \mu_{m} )    \bigg]$
+
+= \text{exp} $\bigg[  -\dfrac{\sigma_m}{2}(\mathbf{x} - 
+\mu_{m} )^tu_mv_m^t (\mathbf{x} - \mu_{m} )    \bigg]$
+
+\vspace{5 mm}
+\noindent
+
+
+\end{document}
