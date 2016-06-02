@@ -36,11 +36,11 @@
 \noindent
  Consider a radial basis function network with spherical Gaussian basis of the form
  
- $$B(\underline{x}|\mu_m, \sigma_m) = exp\bigg[-\frac{1}{2\sigma_m^2}\sum_{i = 1}^{n}(x_i-\mu_{im})^2\bigg]$$
+ $$B_i(\underline{x}|\mu_m, \sigma_m) = exp\bigg[-\frac{1}{2\sigma_m^2}\sum_{j = 1}^{n}(x_{ij}-\mu_{jm})^2\bigg]$$
  
  With the function approximation given by 
  
- $$\hat{F}(\underline{x},\underline{\omega}) = a_0 + \sum_{m=1}^{M}a_mB(\underline{x}|\mu_m, \sigma_m)$$
+ $$\hat{F}_i(\underline{x},\underline{\omega}) = a_0 + \sum_{m=1}^{M}a_mB_i(\underline{x}|\mu_m, \sigma_m)$$
  
  \begin{center}
  where $\underline{\omega}$ is all of the parameters in the model
@@ -48,27 +48,27 @@
  
  Consider the residual from one observation in order to derive the gradient
  
- $$q(\underline{x},\underline{\omega}) = \frac{1}{2} \bigg[ y - \hat{F}(\underline{x},\underline{\omega})\bigg]^2$$
+ $$Q(\underline{x},\underline{\omega}) = \frac{1}{2} \sum_{i=1}^N \bigg[ y_i - \hat{F}_i(\underline{x},\underline{\omega})\bigg]^2$$
  
  We want to derive the gradient of the network. 
  
  \begin{equation}
- G(x) = -g_k(\underline{x}, \underline{w}) = - \frac{\partial q(\underline{x}, \underline{\omega})}{\partial\omega_k} = \bigg(- \frac{\partial q(\underline{x}, \underline{\omega})}{\partial a_m}, - \frac{\partial q(\underline{x}, \underline{\omega})}{\partial \sigma_m}, - \frac{\partial q(\underline{x}, \underline{\omega})}{\partial \mu_{im}}\bigg)
+ G(x) = -g_k(\underline{x}, \underline{w}) = - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial\omega_k} = \bigg(- \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial a_m}, - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial \sigma_m}, - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial \mu_{im}}\bigg)
  \end{equation}
  
  \begin{equation}
- - \frac{\partial q(\underline{x}, \underline{\omega})}{\partial a_m} = \Big(y - \hat{F}(\underline{x}, \underline{\omega}) \Big)B(\underline{x}|\mu_m, \sigma_m) 
+ - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial a_m} = \sum_{i =1}^N \Big(y_i - \hat{F}_i(\underline{x}, \underline{\omega}) \Big)B_i(\underline{x}|\mu_m, \sigma_m) 
  \end{equation}
  
 
 \begin{equation}
 \begin{split}
- - \frac{\partial q(\underline{x}, \underline{\omega})}{\partial \sigma_m} & = \Big(y - \hat{F}(\underline{x}, \underline{\omega}) \Big) a_m B(\underline{x}|\mu_m, \sigma_m) \frac{1}{\sigma_m^3} \sum_{i = 1}^{n}(x_i - \mu_{im})^2\\ & = -\Big(y - \hat{F}(\underline{x}, \underline{\omega}) \Big) a_m B(\underline{x}|\mu_m, \sigma_m) \frac{2}{\sigma_m} ln \bigg[B(\underline{x}|\mu_m, \sigma_m) \bigg]
+ - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial \sigma_m} & = \sum_{i=1}^N \Big(y_i - \hat{F}_i(\underline{x}, \underline{\omega}) \Big) a_m B_i(\underline{x}|\mu_m, \sigma_m) \frac{1}{\sigma_m^3} \sum_{j = 1}^{n}(x_{ij} - \mu_{jm})^2\\ & = - \sum_{i=1}^N \Big(y_i - \hat{F}_i(\underline{x}, \underline{\omega}) \Big) a_m B_i(\underline{x}|\mu_m, \sigma_m) \frac{2}{\sigma_m} ln \bigg[B_i(\underline{x}|\mu_m, \sigma_m) \bigg]
  \end{split}
  \end{equation}
  
  \begin{equation}
- - \frac{\partial q(\underline{x}, \underline{\omega})}{\partial \mu_{im}} = \Big(y - \hat{F}(\underline{x}, \underline{\omega}) \Big) a_m B(\underline{x}|\mu_m, \sigma_m) \frac{1}{\sigma_m^2}(x_i - \mu_{im})
+ - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial \mu_{jm}} = \sum_{i=1}^N\Big(y_i - \hat{F}_i(\underline{x}, \underline{\omega}) \Big) a_m B_i(\underline{x}|\mu_m, \sigma_m) \frac{1}{\sigma_m^2}(x_{ij} - \mu_{jm})
  \end{equation}
 
 
