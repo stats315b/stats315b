@@ -34,10 +34,10 @@
 
 \vspace{5 mm}
 \noindent
-For a multi-hidden layer problem, note that for our funcitonal form, We would 
+For a multi-hidden layer problem, note that for our functional form, We would 
 have a summation of several compositions (equal to the number of hidden layers 
-compositions) of our activation function. We will try to avoid differntiating 
-and writing this lengthy composition function becuase differentiating it and 
+compositions) of our activation function. We will try to avoid differentiating 
+and writing this lengthy composition function because differentiating it and 
 expressing it directly will be difficult to do. Instead, we will abstract the 
 layers away by define a set of nodes each with directional weighted edges. We 
 will find that updating each of the edge's weights will only depend on the 
@@ -70,11 +70,11 @@ $o_{j}^{l} = S(in_{j}^{l})$
 \noindent
 When we compute each node's share of the error and thus it's update to the 
 weights, we have to first look at the nodes closest to the response/output 
-node, compute their share, and then propogate it backwards. This defines a 
-recurssive relationship: the nodes closest to the input layer needs to 
-recurssively solve their share of the error dependent on the nodes closer to 
-the output layer. We must then define our recurrsive base case (output layer) 
-and our recurrsive step. We will consider the base case first
+node, compute their share, and then propagate it backwards. This defines a 
+recursive relationship: the nodes closest to the input layer needs to 
+recursively solve their share of the error dependent on the nodes closer to 
+the output layer. We must then define our recursive base case (output layer) 
+and our recursive step. We will consider the base case first
 
 \vspace{5 mm}
 \noindent
@@ -124,60 +124,124 @@ o_{k}^{L - 1}\\
 %-------------------------------line 9------------------------------------------
 \text{So, } w_{kj}^{t} = w_{kj}^{t - 1} + 
 \eta (Y - S(in_{pred}^{L})) S(in_{pred}^{L}) (1 - S(in_{pred}^{L})) o_{k}^{L - 1} 
+\text{ if } w_{kj} \text{ leads to an output node.}\\
+%-------------------------------line 10-----------------------------------------
+\text{With } S(in_{pred}^{L}) = o_{pred}^{L} \text{, we simplify to:}\\
+%-------------------------------line 11-----------------------------------------
+w_{kj}^{t} = w_{kj}^{t - 1} + 
+\eta (Y - o_{pred}^{L}) o_{pred}^{L} (1 - o_{pred}^{L}) o_{k}^{L - 1} 
 \text{ if } w_{kj} \text{ leads to an output node.}
 \end{gather*}
 
 \vspace{5 mm}
 \noindent
-Note that in the above equation, after our forward propogation to reach a 
+Note that in the above equation, after our forward propagation to reach a 
 prediction, we have estimates for each parameter in the update for the 
 prediction node, so we can compute this update directly. This will be our 
-base case in our recurssive algorithm.
+base case in our recursive algorithm.
 
 \vspace{5 mm}
 \noindent
-\textbf{Case - Weight Updates Layer Before Prediction Layer}
+From the above, let us take another another definition: let $U_pred = 
+\frac{\partial E_{t}}{\partial in_{pred}^{L}}$ and in general 
+$U_k = \frac{\partial E_{t}}{\partial in_{k}^{l}} = 
+- (Y - o_{k}^{l}) o_{k}^{l} (1 - o_{k}^{l})$.
+
+\vspace{5 mm}
+\noindent
+\textbf{Case - Weight Updates in Hidden Layer}
+
+\vspace{5 mm}
+\noindent
+Consider a general case for a hidden layer $l$. Note
 
 \begin{gather*}
 %-------------------------------line 1------------------------------------------
-\frac{\partial E_{t}}{\partial w_{kj}^{L - 1}} = 
-\frac{\partial E_{t}}{\partial z_{j}^{L - 1}} 
-\frac{\partial z_{j}^{L - 1}}{\partial w_{kj}^{L - 1}}
-\text{, by the chain rule}\\
+\frac{\partial E_{t}}{\partial w_{ij}^{l}} = 
+\sum_{k = 1}^{I_{l}} 
+\frac{\partial E_{t}}{\partial in_{k}^{l}} 
+\frac{\partial in_{k}^{l}}{\partial o_{j}^{l - 1}} 
+\frac{\partial o_{j}^{l - 1}}{\partial in_{j}^{l - 1}} 
+\frac{\partial in_{j}^{l - 1}}{\partial w_{k j}^{l - 1}}
+\text{, by the chain rule and fact there are } I_{l} \text{ edges}\\
 %-------------------------------line 2------------------------------------------
-\frac{\partial E_{t}}{\partial z_{j}^{L - 1}} = 
-\frac{\partial}{\partial o_{j}^{L - 1}} \frac{1}{2}(Y - F(x, w_{t}))^{2}\\
+\text{From prior step, } \frac{\partial E_{t}}{\partial in_{k}^{l}} = 
+- (Y - o_{k}^{l}) o_{k}^{l} (1 - o_{k}^{l}) = U_{k}\\
 %-------------------------------line 3------------------------------------------
-\text{Note that } F(x, w_{t}) = \sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L}\\
+\frac{\partial in_{k}^{l}}{\partial o_{j}^{l - 1}} = 
+\frac{\partial}{\partial o_{j}^{l - 1}} 
+\sum_{k = 1}^{I_{l - 1}} w_{kj}^{l - 1} o_{k}^{l - 1} = 
+w_{j k}^{l - 1} \text{ since the only term depnding on } 
+o_{j}^{l - 1} \text{ is } w_{j k}^{l - 1}\\
 %-------------------------------line 4------------------------------------------
-\text{Also note } o_{j}^{L} = S(z_{j}^{L - 1}) 
-\text{, so } 
-\frac{\partial}{\partial z_{j}^{L - 1}} 
-\sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L} 
-\end{gather*}
-
-
-
-\begin{gather*}
-%-------------------------------line 1------------------------------------------
-\text{We can rewrite our } E_{t} \text{ as } 
-\frac{1}{2}(Y - F(X; w_{t}))^{2} = 
-\frac{1}{2}(Y - in_{pred})^{2} = \\
-%-------------------------------line 2------------------------------------------
-= \frac{1}{2}(Y - 
-\sum_{k: \exists \text{ edge } k \text{ to } pred} w_{k,pred} out_{k,pred})^{2}
-\text{ where } pred \text{ is our prediction node}\\
-%-------------------------------line 3------------------------------------------
-\text{Since we are only concerned with outer edges, need gradients for } 
-w_{i, pred}\\
-%-------------------------------line 4------------------------------------------
-\text{Note } \frac{\partial}{\partial w_{i,pred}}
-\sum_{k: \exists \text{ edge } k \text{ to } pred} w_{k,pred} out_{k,pred} = 
-out_{i, pred}\\
+\frac{\partial o_{j}^{l - 1}}{\partial in_{j}^{l - 1}} = 
+\frac{\partial}{\partial in_{j}^{l - 1}} S(in_{j}^{l - 1}) = 
+S(in_{j}^{l - 1}) (1 - S(in_{j}^{l - 1})) = 
+o_{j}^{l - 1} (1 - o_{j}^{l - 1})\\
 %-------------------------------line 5------------------------------------------
-\text{So } \frac{\partial}{\partial w_{i,pred}} E_{t} = 
-(Y - \sum_{k: \exists \text{ edge } k \text{ to } pred} w_{k,pred} out_{k,pred})
-out_{i, pred}
+\frac{\partial in_{j}^{l - 1}}{\partial w_{ij}^{l - 1}} = 
+\frac{\partial}{\partial w_{ij}^{l - 1}} 
+\sum_{i = 1}^{I_{l - 1}} w_{ij}^{l - 1} o_{i}^{l - 1} = o_{i}^{l - 1} 
+\text{ since only dependency on } w_{ij}^{l - 1} 
+\text{ is } o_{i}^{l - 1}\\
+%-------------------------------line 6------------------------------------------
+\text{Then } 
+\frac{\partial E_{t}}{\partial w_{i j}^{l - 1}} = 
+\sum_{k = 1}^{I_{l}} 
+\frac{\partial E_{t}}{\partial in_{k}^{l}} 
+\frac{\partial in_{k}^{l}}{\partial o_{j}^{l - 1}} 
+\frac{\partial o_{j}^{l - 1}}{\partial in_{j}^{l - 1}} 
+\frac{\partial in_{j}^{l - 1}}{\partial w_{i j}^{l - 1}} = \\
+%-------------------------------line 7------------------------------------------
+= 
+\sum_{k = 1}^{I_{l}} 
+- (Y - o_{k}^{l}) o_{k}^{l} (1 - o_{k}^{l})
+w_{j k}^{l - 1}
+o_{j}^{l - 1} (1 - o_{j}^{l - 1}) 
+o_{i}^{l - 1} = 
+\sum_{k = 1}^{I_{l}} 
+U_{k}
+w_{j k}^{l - 1}
+o_{j}^{l - 1} (1 - o_{j}^{l - 1}) 
+o_{i}^{l - 1}\\
+%-------------------------------line 8------------------------------------------
+\text{Define } U_{j} = 
+\sum_{k = 1}^{I_{l}} 
+U_{k}
+w_{j k}^{l - 1}
+o_{j}^{l - 1} (1 - o_{j}^{l - 1}) 
+\text{, then } 
+\frac{\partial E_{t}}{\partial w_{i j}^{l - 1}} = 
+U_{j} o_{i}^{l - 1}\\
+%-------------------------------line 8------------------------------------------
+\text{And our update is } 
+w_{ij}^{t} = w_{ij}^{t - 1} - 
+\eta U_{j} o_{i}^{l - 1}
 \end{gather*}
+
+\vspace{5 mm}
+\noindent
+Note that there is a dependency on $U_{j}$ with all other preceding $U_{k}$`s. 
+This is our recursive relationship with our base case $U_{k} = U_{pred}$. 
+Further, note that the only dependency on the updates are on nodes that connect 
+directly to the node we wish to update. Our algorithm is as follows:
+
+\vspace{5 mm}
+\noindent
+\begin{algorithmic}
+\STATE $HelperUpdate(w_{i j}^{t - 1})$
+\IF{$j$ in prediction layer}
+    \STATE compute and return $U_{j}$ 
+\ELSE
+    \STATE compute and return $\sum_{k = 1}^{I_{l}} 
+    HelperUpdate(w_{j k}^{t - 1}) 
+    w_{j k}^{l - 1} o_{j}^{l - 1} (1 - o_{j}^{l - 1})$
+\ENDIF
+\STATE $Update(w_{i j}^{t - 1})$
+\STATE return $w_{i j}^{t} = w_{i j}^{t - 1} - 
+\eta HelperUpdate(w_{i j}^{t - 1})$
+\end{algorithmic}
+
+
 
 \end{document}
