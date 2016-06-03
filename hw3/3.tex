@@ -1,0 +1,85 @@
+\documentclass[11pt]{article}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{enumerate}
+\usepackage{mdframed}
+\usepackage{mathrsfs}
+\usepackage{relsize}
+
+
+\begin{document}
+\begin{center}
+%-------------------------------------------------------------------------------
+%---------------------------------Header----------------------------------------
+%-------------------------------------------------------------------------------
+
+\framebox{\parbox{6.5in}{
+{\bf{STATS 315B: Data Mining, Spring 2016}}\\
+{\bf Homework 3, Due 6/3/2016}\\
+{\bf Completed by: Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas}
+}}
+\ \\
+\end{center}
+
+\section*{Problem 3}
+
+\vspace{5 mm}
+\noindent
+
+The given radial basis function with elliptically symmetric Gaussian basis is
+
+$B(\mathbf{x}|\mu_m,\boldsymbol \Sigma)$ 
+= \text{exp} $\bigg[  -\dfrac{1}{2}(\mathbf{x} - 
+\mu_{m} )^t\boldsymbol \Sigma (\mathbf{x} - \mu_{m} )    \bigg]$
+\text ({where $\mathbf{x}, \mu_{m}  \in \mathcal{R}^n$ and $\boldsymbol \Sigma \in  \mathcal{R}^{n \times n}$)}
+
+=\text{exp} $\bigg[  -\dfrac{1}{2}(\mathbf{x} - 
+\mu_{m} )^t\mathbf {R^tR} (\mathbf{x} - \mu_{m} )    \bigg]$
+
+\text{(where $\mathbf {R} \in  \mathcal{R}^{n \times n}$ is an upper triangular matrix obtained from} \\
+\text {Cholesky factorization of positive definite matrix $\boldsymbol \Sigma $)}
+
+= \text{exp} $\bigg[  -\dfrac{1}{2}\bigg(\mathbf {R}(\mathbf{x} - 
+\mu_{m} )\bigg)^t \bigg(\mathbf {R}(\mathbf{x} - \mu_{m}) \bigg)    \bigg]$ 
+
+
+= \text{exp} $\bigg[  -\dfrac{1}{2}\bigg(\mathbf {R}\mathbf{x} - 
+\mathbf {R}\mu_{m} \bigg)^t \bigg(\mathbf {R}\mathbf{x} - 
+\mathbf {R}\mu_{m} \bigg)  \bigg]$ 
+
+
+= \text{exp} $\bigg[  -\dfrac{1}{2}\bigg(\widetilde{\mathbf{x}} - 
+\widetilde\mu_m  \bigg)^t \bigg(\widetilde{\mathbf{x}} - 
+\widetilde\mu_m  \bigg)  \bigg]$ 
+\text{(where $\widetilde{\mathbf{x}} = \mathbf {R}\mathbf{x} $ and 
+$\widetilde\mu_m = \mathbf {R}\mu_{m}$)}
+
+
+= \text{exp} $\bigg[  -\dfrac{1}{2}\mathlarger{\sum}_{i = 1}^{n}\big(\widetilde{x}_i - 
+\widetilde {\mu}_{im} \big)^2 \bigg]$ 
+
+
+= \text{exp} $\bigg[  -\dfrac{1}{2(1)^2}\mathlarger{\sum}_{i = 1}^{n}\big(\widetilde{x}_i - 
+\widetilde {\mu}_{im} \big)^2 \bigg]$ 
+
+
+\vspace{5 mm}
+\noindent
+Thus, we see that the output of the given elliptically symmetric Gaussian basis is
+equivalent to the output of spherically symmetric Gaussian
+basis function  with $\sigma_m = 1$, $\widetilde{\mathbf{x}} = \mathbf {R}\mathbf{x} $
+and $\mathbf{\widetilde\mu_m} = \mathbf {R}\mu_{m}$
+
+
+
+\end{document}
