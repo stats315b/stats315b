@@ -231,7 +231,8 @@ directly to the node we wish to update. Our algorithm is as follows:
 \begin{algorithmic}
 \STATE $HelperUpdate(w_{i j}^{t - 1})$
 \IF{$j$ in prediction layer}
-    \STATE compute and return $U_{j}$ 
+    \STATE compute and return $U_{j} = - (Y - o_{pred}^{L}) o_{pred}^{L} 
+    (1 - o_{pred}^{L})$ 
 \ELSE
     \STATE compute and return $\sum_{k = 1}^{I_{l}} 
     HelperUpdate(w_{j k}^{t - 1}) 
