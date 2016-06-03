@@ -1,0 +1,243 @@
+---
+title: "Probelem 5 - Spam Email: Neural Net"
+author: "Henry Neeb, Christopher Kurrus, Tyler Chase, and Yash Vyas"
+date: "June 3, 2016"
+output: pdf_document
+---
+
+## Libraries
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(caret)
+library(nnet)
+library(purrr)
+```
+
+## File Parameters
+
+```{r}
+# Session -> set working directory -> Source file location
+
+# Path for data
+data_path <- "data/"
+file_data <- "Spam_Data.txt"
+file_test <- "Spam.Test.txt"
+file_train <- "Spam_Train.txt"
+ext_data <- paste(data_path, file_data, sep = "")
+ext_test <- paste(data_path, file_test, sep = "")
+ext_train <- paste(data_path, file_train, sep = "")
+```
+
+## Read in Data
+
+```{r}
+# Create labels for our data. Copied from the boosting tutorial
+rflabs<-c("make", "address", "all", "3d", "our", "over", "remove",
+"internet","order", "mail", "receive", "will",
+"people", "report", "addresses","free", "business",
+"email", "you", "credit", "your", "font","000","money",
+"hp", "hpl", "george", "650", "lab", "labs",
+"telnet", "857", "data", "415", "85", "technology", "1999",
+"parts","pm", "direct", "cs", "meeting", "original", "project",
+"re","edu", "table", "conference", ";", "(", "[", "!", "$", "#",
+"CAPAVE", "CAPMAX", "CAPTOT","type")
+
+# Read in data. for main data, need to specify as double for cs. defaults to int
+data <- read_csv(file = ext_data, 
+                 col_names = rflabs, 
+                 col_types = cols(cs = col_double())) 
+test <- read_csv(file = ext_test, col_names = rflabs)
+train <- read_csv(file = ext_train, col_names = rflabs)
+
+# Split test and train into features and response
+x_test <- test %>% select(-type)
+x_train <- train %>% select(-type)
+y_test <- test %>% select(type)
+y_train <- train %>% select(type)
+```
+
+## Prep Data
+
+We need to standardize our predictor columns. We accomplish this with 
+preprocessing using the caret package.
+
+```{r}
+# center and scale the test data
+x_test <- x_test %>% 
+  preProcess(method = c("center", "scale")) %>% 
+  predict(x_test)
+
+# center and scale the training data
+x_train <- x_train %>% 
+  preProcess(method = c("center", "scale")) %>% 
+  predict(x_train)
+```
+
+## Part a - Fit Our Models
+
+We wish to iterate over a number of different hidden units, each with different 
+random weight starts. Per the instructions, we want to fit 10 different random 
+weight starts to each of 10 different hidden unit models (1 through 10). We 
+define our model parameters first here.
+
+```{r}
+# Define our modeling parameters
+num_weights <- 10
+min_units <- 1
+max_units <- 10
+weight_range <- 0.5
+max_iter <- 10000
+```
+
+Now we must loop and fit our models. We will store our fits in a list such that 
+the first `num_weights` correspond to the `min_units` model, the next 
+`num_weights` correspond to the next `min_units + 1` model and so on.
+
+```{r}
+# Storage matrix for all of our fits. first 'num_weights' corresponds to 
+# 'min_units', next 'num_weights' is next set of hiddne units and so on
+fits = list()
+for (i in min_units:max_units) {
+  for (j in seq_len(num_weights)) {
+    fit <- nnet(x = x_train, 
+            y = y_train, 
+            size = i,
+            rang = weight_range,
+            maxit = max_iter, )
+    fits[length(fits) + 1] <- list(fit)
+  }
+}
+```
+
+## Part a - Predict and Display Misclassification
+
+We now apply predictions for each model and compute. We will then average our 
+predictions across our `num_weights` models per hidden unit model and compute 
+an aggregate misclassification rate.
+
+```{r}
+# Apply a prediction against our test data
+predictions_a <- fits %>% 
+  map(~predict(.x, x_test))
+
+# Average our predictions across models with same hidden units
+ave_pred_a <- matrix(0, max_units, dim(y_test)[1])
+for (j in seq_len(max_units)) {
+  for (i in seq_len(num_weights)) {
+    pred_mat <- t(as_vector(predictions_a[num_weights * (j - 1) + i]))
+    ave_pred_a[j,] <- pred_mat/num_weights + ave_pred_a[j,] 
+  }
+}
+
+# Round average predicitons to nearest integer - 0, or 1
+ave_pred_a <- round(ave_pred_a, 0)
+
+# Compute missclassificaions
+missclass_a <- matrix(0, max_units, 1)
+for (i in seq_len(max_units)) {
+  missclass_a[i,] <- sum(abs(ave_pred_a[i, ] - t(y_test)))/dim(y_test)[1]
+}
+```
+
+## Part a - Best Number Hidden Units
+
+We will now plot our missclassification rates to see which number of hidden 
+units performs the best.
+
+```{r}
+# Convert to a dataframe
+row_hu <- seq(min_units, max_units, 1)
+missclass_a <- cbind(missclass_a, row_hu)
+missclass_a <- as.data.frame(missclass_a)
+colnames(missclass_a) <- c("error", "units")
+
+# Plot missclassifications
+missclass_a %>% ggplot() +
+  geom_point(mapping = aes(x = units, y = error)) + 
+  scale_x_continuous(breaks = row_hu) + 
+  labs(title = "Missclassification Error vs # Hidden Units")
+
+# Best hidden units
+opt_hu <- which.min(missclass_a$error)
+```
+
+# Part b - Fit Models
+
+We will now fit models to find the optimal decay for our optimal hidden units 
+found in part a.
+
+```{r}
+# Parms
+min_decay <- 0.0
+max_decay <- 1.0
+step_decay <- 0.1
+
+decay <- seq(min_decay, max_decay, step_decay)
+
+fits_b = list()
+for (i in decay) {
+  for (j in seq_len(num_weights)) {
+    fit <- nnet(x = x_train, 
+            y = y_train, 
+            size = opt_hu,
+            rang = weight_range,
+            maxit = max_iter, 
+            decay = i)
+    fits_b[length(fits_b) + 1] <- list(fit)
+  }
+}
+```
+
+## Part b - Predict and Display Misclassification
+
+We now apply predictions for each model and compute. We will then average our 
+predictions across our `num_weights` models per decay rate and compute 
+an aggregate misclassification rate.
+
+```{r}
+# Apply a prediction against our test data
+predictions_b <- fits_b %>% 
+  map(~predict(.x, x_test))
+
+# Average our predictions across models with same hidden units
+ave_pred_b <- matrix(0, length(decay), dim(y_test)[1])
+for (j in seq_len(length(decay))) {
+  for (i in seq_len(num_weights)) {
+    pred_mat <- t(as_vector(predictions_b[num_weights * (j - 1) + i]))
+    ave_pred_b[j,] <- pred_mat/num_weights + ave_pred_b[j,] 
+  }
+}
+
+# Round average predicitons to nearest integer - 0, or 1
+ave_pred_b <- round(ave_pred_b, 0)
+
+# Compute missclassificaions
+missclass_b <- matrix(0, length(decay), 1)
+for (i in seq_len(length(decay))) {
+  missclass_b[i,] <- sum(abs(ave_pred_b[i, ] - t(y_test)))/dim(y_test)[1]
+}
+```
+
+## Part b - Best Decay Rate
+
+We will now plot our missclassification rates to see which decay rate performs 
+the best.
+
+```{r}
+# Convert to a dataframe
+missclass_b <- cbind(missclass_b, decay)
+missclass_b <- as.data.frame(missclass_b)
+colnames(missclass_b) <- c("error", "decay")
+
+# Plot missclassifications
+missclass_b %>% ggplot() +
+  geom_point(mapping = aes(x = decay, y = error)) + 
+  scale_x_continuous(breaks = decay) + 
+  labs(title = "Missclassification Error vs Decay Rate")
+
+# Best hidden units
+opt_decay <- which.min(missclass_a$error) * step_decay - step_decay
+```
