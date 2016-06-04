@@ -53,7 +53,11 @@
  We want to derive the gradient of the network. 
  
  \begin{equation}
- G(x) = -g_k(\underline{x}, \underline{w}) = - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial\omega_k} = \bigg(- \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial a_m}, - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial \sigma_m}, - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial \mu_{im}}\bigg)
+ G(x) = -g_k(\underline{x}, \underline{w}) = - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial\omega_k} = \bigg(-\frac{ \partial Q(\underline{x}, \underline{\omega})} {\partial a_0}, - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial a_m}, - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial \sigma_m}, - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial \mu_{im}}\bigg)
+ \end{equation}
+ 
+ \begin{equation}
+ - \frac{\partial Q(\underline{x}, \underline{\omega})}{\partial a_0} = \sum_{i =1}^N \Big(y_i - \hat{F}_i(\underline{x}, \underline{\omega}) \Big)
  \end{equation}
  
  \begin{equation}
