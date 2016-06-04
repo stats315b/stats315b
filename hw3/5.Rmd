@@ -18,7 +18,7 @@ library(purrr)
 
 ## File Parameters
 
-```{r}
+```{r, cache = TRUE}
 # Session -> set working directory -> Source file location
 
 # Path for data
@@ -33,7 +33,7 @@ ext_train <- paste(data_path, file_train, sep = "")
 
 ## Read in Data
 
-```{r}
+```{r, cache = TRUE}
 # Create labels for our data. Copied from the boosting tutorial
 rflabs<-c("make", "address", "all", "3d", "our", "over", "remove",
 "internet","order", "mail", "receive", "will",
@@ -64,7 +64,7 @@ y_train <- train %>% select(type)
 We need to standardize our predictor columns. We accomplish this with 
 preprocessing using the caret package.
 
-```{r}
+```{r, cache = TRUE}
 # center and scale the test data
 x_test <- x_test %>% 
   preProcess(method = c("center", "scale")) %>% 
@@ -83,7 +83,7 @@ random weight starts. Per the instructions, we want to fit 10 different random
 weight starts to each of 10 different hidden unit models (1 through 10). We 
 define our model parameters first here.
 
-```{r}
+```{r, cache = TRUE}
 # Define our modeling parameters
 num_weights <- 10
 min_units <- 1
@@ -93,10 +93,10 @@ max_iter <- 10000
 ```
 
 Now we must loop and fit our models. We will store our fits in a list such that 
-the first `num_weights` correspond to the `min_units` model, the next 
-`num_weights` correspond to the next `min_units + 1` model and so on.
+the first `r num_weights` correspond to the `r min_units` model, the next 
+`r num_weights` correspond to the next `r min_units + 1` model and so on.
 
-```{r}
+```{r, cache = TRUE, results="hide"}
 # Storage matrix for all of our fits. first 'num_weights' corresponds to 
 # 'min_units', next 'num_weights' is next set of hiddne units and so on
 fits = list()
@@ -106,7 +106,7 @@ for (i in min_units:max_units) {
             y = y_train, 
             size = i,
             rang = weight_range,
-            maxit = max_iter, )
+            maxit = max_iter)
     fits[length(fits) + 1] <- list(fit)
   }
 }
@@ -115,10 +115,10 @@ for (i in min_units:max_units) {
 ## Part a - Predict and Display Misclassification
 
 We now apply predictions for each model and compute. We will then average our 
-predictions across our `num_weights` models per hidden unit model and compute 
+predictions across our `r num_weights` models per hidden unit model and compute 
 an aggregate misclassification rate.
 
-```{r}
+```{r, cache = TRUE}
 # Apply a prediction against our test data
 predictions_a <- fits %>% 
   map(~predict(.x, x_test))
@@ -140,6 +140,7 @@ missclass_a <- matrix(0, max_units, 1)
 for (i in seq_len(max_units)) {
   missclass_a[i,] <- sum(abs(ave_pred_a[i, ] - t(y_test)))/dim(y_test)[1]
 }
+
 ```
 
 ## Part a - Best Number Hidden Units
@@ -147,7 +148,7 @@ for (i in seq_len(max_units)) {
 We will now plot our missclassification rates to see which number of hidden 
 units performs the best.
 
-```{r}
+```{r, cache = TRUE}
 # Convert to a dataframe
 row_hu <- seq(min_units, max_units, 1)
 missclass_a <- cbind(missclass_a, row_hu)
@@ -169,7 +170,7 @@ opt_hu <- which.min(missclass_a$error)
 We will now fit models to find the optimal decay for our optimal hidden units 
 found in part a.
 
-```{r}
+```{r, cache = TRUE, results="hide"}
 # Parms
 min_decay <- 0.0
 max_decay <- 1.0
@@ -194,10 +195,10 @@ for (i in decay) {
 ## Part b - Predict and Display Misclassification
 
 We now apply predictions for each model and compute. We will then average our 
-predictions across our `num_weights` models per decay rate and compute 
+predictions across our `r num_weights` models per decay rate and compute 
 an aggregate misclassification rate.
 
-```{r}
+```{r, cache = TRUE}
 # Apply a prediction against our test data
 predictions_b <- fits_b %>% 
   map(~predict(.x, x_test))
@@ -226,7 +227,7 @@ for (i in seq_len(length(decay))) {
 We will now plot our missclassification rates to see which decay rate performs 
 the best.
 
-```{r}
+```{r, cache = TRUE}
 # Convert to a dataframe
 missclass_b <- cbind(missclass_b, decay)
 missclass_b <- as.data.frame(missclass_b)
@@ -239,5 +240,158 @@ missclass_b %>% ggplot() +
   labs(title = "Missclassification Error vs Decay Rate")
 
 # Best hidden units
-opt_decay <- which.min(missclass_a$error) * step_decay - step_decay
+opt_decay_b <- which.min(missclass_b$error) * step_decay - step_decay
+opt_mc_b <- min(missclass_b$error)
 ```
+
+## Part c - Predict and Display Misclassification
+
+We will now apply predictions to our part b's models. We will predict and 
+receive the raw probabilities of an observation being spam. We then average 
+these probabilities over our 10 models, and classify as spam if the probability 
+is over a certain threshold.
+
+```{r, cache = TRUE}
+# parms
+good_cut <- 0.82
+
+# Apply a prediction against our test data
+predictions_c <- fits_b %>% 
+  map(~predict(.x, x_test, type = "raw"))
+
+# Average our predictions across models with same hidden units
+ave_pred_c <- matrix(0, length(decay), dim(y_test)[1])
+for (j in seq_len(length(decay))) {
+  for (i in seq_len(num_weights)) {
+    pred_mat <- t(as_vector(predictions_c[num_weights * (j - 1) + i]))
+    ave_pred_c[j,] <- pred_mat/num_weights + ave_pred_c[j,] 
+  }
+}
+
+# Round average predicitons to nearest integer - 0, or 1
+ave_pred_c <- ifelse(ave_pred_c > good_cut, 1, 0)
+
+# Compute error rate for classifying a good email as spam only
+mc <- matrix(0, 11, 1)
+for(i in seq_len(length(decay))){
+  df <- cbind(ave_pred_c[i,],as.matrix(y_test)) %>% 
+    as.data.frame() %>% 
+    rename(ave_pred_c = V1, y_test = type) %>% 
+    filter(y_test == 0) %>% 
+    mutate(res = y_test==ave_pred_c)
+  mc[i, 1] <- 1 - (sum(df$res)/length(df$res))
+}
+
+# Compute Total Missclassificaions
+missclass_c <- matrix(0, length(decay), 1)
+for (i in seq_len(length(decay))) {
+  missclass_c[i,] <- sum(abs(ave_pred_c[i, ] - t(y_test)))/dim(y_test)[1]
+}
+```
+
+## Part c - Best Decay Rate
+
+We will now plot both our total missclassification rates and our 
+missclassification rate for classifying a real email as spam. We will pick our 
+model such that it produces the smallest total error and it produces a 
+missclassification rate of classifying good emails as spam less than 1%.
+
+```{r, cache = TRUE}
+# Convert to a dataframe
+missclass_c <- cbind(missclass_c, decay)
+missclass_c <- as.data.frame(missclass_c)
+colnames(missclass_c) <- c("error", "decay")
+
+good_c <- cbind(mc, decay)
+good_c <- as.data.frame(good_c)
+colnames(good_c) <- c("error", "decay")
+
+# Plot total missclassifications
+missclass_c %>% ggplot() +
+  geom_point(mapping = aes(x = decay, y = error)) + 
+  scale_x_continuous(breaks = decay) + 
+  labs(title = "Total Missclassification Error vs Decay Rate")
+
+# Plot good email missclassifications
+good_c %>% ggplot() +
+  geom_point(mapping = aes(x = decay, y = error)) + 
+  scale_x_continuous(breaks = decay) + 
+  labs(title = "Good Missclassification Error vs Decay Rate")
+
+# Best hidden units
+opt_decay_c <- which.min(missclass_b$error) * step_decay - step_decay
+opt_good <- good_c$error[which.min(missclass_b$error)]
+opt_mc_c <- min(missclass_c$error)
+```
+
+\newpage
+
+# Part a
+
+We have fit our models and calculated our missclassification rates for all 10 
+models. A plot of our misclassification is:
+
+```{r, cache=TRUE}
+missclass_a %>% ggplot() +
+  geom_point(mapping = aes(x = units, y = error)) + 
+  scale_x_continuous(breaks = row_hu) + 
+  labs(title = "Missclassification Error vs # Hidden Units")
+```
+
+As we can see, the model that uses `r opt_hu` is our best model. We also note 
+that the misclassification rates for each hidden units appear unstable in that 
+there does not appear to be a functional relationship between error and the 
+number of hidden units. After running several models, we confirmed this 
+intuition.
+
+# Part b
+
+We used `r opt_hu` for this model and a regularization factor equal to 
+`r opt_decay_b`. Our resulting misclassification estimate is `r opt_mc_b`. Here is 
+a plot of our error as a function of our regularization factor:
+
+```{r, cache=TRUE}
+missclass_b %>% ggplot() +
+  geom_point(mapping = aes(x = decay, y = error)) + 
+  scale_x_continuous(breaks = decay) + 
+  labs(title = "Missclassification Error vs Decay Rate")
+```
+
+We note that there appears to be more of a functional relationship between our 
+decay rate and our error. Roughly, as we increase our decay rate (aside from 
+decay = 0) our error increases.
+
+# Part c
+
+We used `r opt_hu` for this model and regularization factor equal to 
+`r opt_decay_c`. Our resulting total missclassification estimate is 
+`r opt_mc_c` which also has a missclassification rate of classifying good 
+emails as spam equal to `r opt_good`, which is less than 1% as desired. Our 
+classification scheme was if we predict an email is spam with probability less 
+than `r good_cut` we predict as a regular email, else it is spam.
+
+We chose the optimal model according to the following scheme:
+
+* We first chose the decay rate that would minimize the total missclassification error.
+* If this decay rate also had an error rate of misclassifying good emails of 
+less than 1%, we picked this decay rate. Otherwise, we chose the decay rate 
+that produced the next smallest total missclassification error, etc...
+
+A plot of the total missclassification error is:
+
+```{r, cache=TRUE}
+missclass_c %>% ggplot() +
+  geom_point(mapping = aes(x = decay, y = error)) + 
+  scale_x_continuous(breaks = decay) + 
+  labs(title = "Total Missclassification Error vs Decay Rate")
+```
+
+A plot of the good email missclassification error is:
+
+```{r, cache=TRUE}
+good_c %>% ggplot() +
+  geom_point(mapping = aes(x = decay, y = error)) + 
+  scale_x_continuous(breaks = decay) + 
+  labs(title = "Good Missclassification Error vs Decay Rate")
+```
+
