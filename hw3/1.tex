@@ -54,14 +54,12 @@ node.
 w_{ij}^{l} o_{i}^{l - 1})}$
 \item $S = $ our transfer function, which we will take as $S(z) = 
 \frac{1}{1 + exp(-z)}$. Note $\frac{\partial S}{\partial z} = S(z)(1 - S(z))$
-\item $z_{j}^{l} = \sum_{i = 0}^{I_{l}} w_{ij}^{l} o_{i}^{l}$ weighted sum of 
-input for node $j$ in layer $l$.
 \item $F(x, w) = $ our model $ = \sum_{i = 0}^{I_{L}} w_{ij}^{L} o_{i}^{L}$
 \item $E_{t} = \frac{1}{2}(Y - F(x, w_{t}))^{2} $ Our total error at iteration 
 $t$. We square this because we are considering squared error loss. We apply the 
 $\frac{1}{2}$ for simplification when we apply a derivative. Scaling by a 
 constant should not affect our outcome.
-\item $in_{j}^{l} = \sum_{k = 1}^{I_{l}} w_{kj}^{l} o_{k}^{l - 1} $ = the 
+\item $in_{j}^{l} = \sum_{k = 1}^{I_{j}^{l}} w_{kj}^{l} o_{k}^{l - 1} $ = the 
 weighted input to node $j$ in layer $l$. By definition, 
 $o_{j}^{l} = S(in_{j}^{l})$
 \end{itemize}
@@ -95,7 +93,7 @@ derivation is as follows:
 %-------------------------------line 2------------------------------------------
 \frac{\partial E_{t}}{\partial in_{pred}^{L}} = 
 \frac{\partial}{\partial in_{pred}^{L}} \frac{1}{2} (Y - F(x, w_{t}))^{2} = 
-\frac{\partial}{\partial in_{pred}^{L}} \frac{1}{2} (Y - S(in_{pred}^{L})^{2} = 
+\frac{\partial}{\partial in_{pred}^{L}} \frac{1}{2} (Y - S(in_{pred}^{L}))^{2} = 
 - (Y - S(in_{pred}^{L})) S'(in_{pred}^{L})\\
 %-------------------------------line 3------------------------------------------
 \text{If we use our definition of } S \text{, } S' = S (1 - S) \text{, so } 
@@ -142,9 +140,9 @@ base case in our recursive algorithm.
 
 \vspace{5 mm}
 \noindent
-From the above, let us take another another definition: let $U_pred = 
+From the above, let us take another another definition: let $U_{pred} = 
 \frac{\partial E_{t}}{\partial in_{pred}^{L}}$ and in general 
-$U_k = \frac{\partial E_{t}}{\partial in_{k}^{l}} = 
+$U_{k} = \frac{\partial E_{t}}{\partial in_{k}^{l}} = 
 - (Y - o_{k}^{l}) o_{k}^{l} (1 - o_{k}^{l})$.
 
 \vspace{5 mm}
